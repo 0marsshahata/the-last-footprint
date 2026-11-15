@@ -19,7 +19,7 @@ done
 echo "Speech resource $NAME in $REGION"
 export TLF_KEY=$(az cognitiveservices account keys list -n "$NAME" -g "$RG" --query key1 -o tsv)
 export TLF_REGION=$REGION
-rm -rf ~/tlf-voices && mkdir -p ~/tlf-voices
+mkdir -p ~/tlf-voices  # already-rendered lines are kept, so a second run only fills the gaps
 curl -sL "https://raw.githubusercontent.com/0marsshahata/the-last-footprint/main/tools/voice_lines.json" -o ~/tlf-voices/lines.json
 python3 - <<'PY'
 import json, os, time, urllib.request, html
@@ -29,6 +29,7 @@ url = f'https://{region}.tts.speech.microsoft.com/cognitiveservices/v1'
 ok = 0
 for i, l in enumerate(lines):
     out = os.path.expanduser(f"~/tlf-voices/{l['id']}.mp3")
+    if os.path.exists(out) and os.path.getsize(out) > 2000: ok += 1; continue
     lang = 'ar-EG' if l['lang'] == 'ar' else 'en-US'
     ssml = (f"<speak version='1.0' xml:lang='{lang}'><voice name='{l['voice']}'>"
             f"<prosody pitch='{l['pitch']}' rate='{l['rate']}'>{html.escape(l['text'])}</prosody></voice></speak>")
@@ -41,9 +42,11 @@ for i, l in enumerate(lines):
             open(out, 'wb').write(data); ok += 1
             print(f"{i+1}/{len(lines)} {l['id']} {len(data)//1024} KB", flush=True); break
         except urllib.error.HTTPError as e:
-            if e.code == 429: time.sleep(8 * (attempt + 1)); continue
+            if e.code in (429, 500, 502, 503): time.sleep(8 * (attempt + 1)); continue
             print('error', l['id'], e.code, e.read()[:200]); break
-    time.sleep(3.2)  # the free tier allows about 20 requests a minute
+        except Exception as e:
+            print('retry', l['id'], e); time.sleep(6 * (attempt + 1))
+    time.sleep(4)  # the free tier allows about 20 requests a minute
 print('done', ok, 'of', len(lines))
 PY
 cd ~ && rm -f tlf-voices.zip && zip -qr tlf-voices.zip tlf-voices -x 'tlf-voices/lines.json'

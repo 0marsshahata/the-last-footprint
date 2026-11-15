@@ -7,7 +7,7 @@ An interactive 3D story for students aged 10–15 about three NASA rovers that f
 Built by **Team 3M** for **NASA Space Apps Challenge 2026 · Kafr El Sheikh**, challenge *“Abandoned but not Forgotten”*.
 
 ▶ **Live site:** https://0marsshahata.github.io/the-last-footprint/
-Arabic by default. For English, add `?lang=en`: https://0marsshahata.github.io/the-last-footprint/?lang=en
+English by default; Arabic is one tap away (the language button), or open https://0marsshahata.github.io/the-last-footprint/?lang=ar
 
 ---
 
@@ -57,6 +57,7 @@ Every date and number was checked against NASA sources. The full list, with link
 - Mars and Milky Way maps: Solar System Scope (CC BY 4.0), based on NASA data.
 - Earth: NASA Blue Marble: Next Generation (NASA Earth Observatory, Reto Stöckli) and NASA Earth at Night.
 - Photo PIA05547: NASA/JPL/Cornell/Texas A&M.
+- Voices: Microsoft Azure AI Speech neural voices (ar-EG Shakir and Salma; en-US Ana, Aria, Guy and Davis), rendered once with `tools/synth.sh`.
 - Fonts: IBM Plex Sans Arabic, Lalezar, Chakra Petch (SIL Open Font License).
 - Made by the team in code: Sojourner model, SOL, the glove, the terrain, the spacecraft, the parachute and airbags, effects and all sounds.
 
@@ -65,7 +66,7 @@ Every date and number was checked against NASA sources. The full list, with link
 We are open about how we used AI tools:
 
 - We used **Claude** (by Anthropic) as an assistant for coding, design and writing. Every decision was the team’s.
-- Character voices are computer-generated (text-to-speech), not real people’s voices.
+- Character voices use Microsoft Azure neural text-to-speech (Egyptian Arabic and US English voices), not real people’s voices.
 - **SOL** is a fictional character we designed. Rover lines marked *Story* are fiction; lines marked *Fact* are checked against NASA.
 - All real photos are NASA’s and credited. No AI-generated image is presented as real.
 
@@ -73,7 +74,7 @@ We are open about how we used AI tools:
 
 - [three.js](https://threejs.org/) r186 (WebGL), bundled with esbuild into one `app.js`.
 - Post-processing: bloom, colour grade, film grain.
-- Web Audio API for the sound design; Web Speech API and pre-rendered audio for the voices.
+- Web Audio API for the sound design; pre-rendered Azure neural voices, with the browser's Web Speech API as a fallback.
 - Textures and the 3D model are embedded in small scripts, so the site also runs from a double-click (`file://`), with no internet.
 
 ```

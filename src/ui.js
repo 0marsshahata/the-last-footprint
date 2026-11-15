@@ -181,7 +181,7 @@ const STR = {
   factNote: { ar: 'كل الأرقام والتواريخ متراجعة على مصادر ناسا. صورة <bdi>PIA05547: NASA/JPL/Cornell/Texas A&amp;M</bdi>.', en: 'All numbers and dates were checked against NASA sources. Image PIA05547: NASA/JPL/Cornell/Texas A&amp;M.' },
   aiP1: { ar: 'إحنا بنوضح بصراحة إزاي استخدمنا أدوات الذكاء الاصطناعي:', en: 'We are open about how we used AI tools:' },
   ai1: { ar: 'استخدمنا <bdi>Claude</bdi> (من <bdi>Anthropic</bdi>) كمساعد في البرمجة والتصميم وكتابة النصوص، وكل قرار كان بتاع الفريق.', en: 'We used Claude (by Anthropic) as an assistant for coding, design and writing; every decision was the team’s.' },
-  ai2: { ar: 'أصوات الشخصيات مولّدة بالكمبيوتر (تحويل النص لكلام <bdi>Text-to-Speech</bdi>)، ومش أصوات ناس حقيقيين.', en: 'Character voices are computer-generated (text-to-speech), not real people’s voices.' },
+  ai2: { ar: 'أصوات الشخصيات معمولة بأصوات <bdi>Microsoft Azure</bdi> العصبية (تحويل النص لكلام)، ومش أصوات ناس حقيقيين.', en: 'Character voices use Microsoft Azure neural text-to-speech, not real people’s voices.' },
   ai3: { ar: 'سول شخصية خيالية من تصميمنا، وكلام الروفرز اللي عليه «قصة» خيال، أما «حقيقة» فمتراجعة على ناسا.', en: 'SOL is a fictional character we designed; rover lines marked “Story” are fiction, lines marked “Fact” are checked against NASA.' },
   ai4: { ar: 'الصور الحقيقية كلها من ناسا ومكتوب مصدرها، وما استخدمناش صور مولّدة بالذكاء الاصطناعي على إنها حقيقية.', en: 'All real photos are NASA’s and credited; no AI-generated image is presented as real.' },
 };

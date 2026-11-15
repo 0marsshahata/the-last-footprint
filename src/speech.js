@@ -1,7 +1,7 @@
 // Voices for SOL and the rovers.
 // Today: the browser's own speech engine (Web Speech API). In Microsoft Edge this includes Microsoft's
 // natural Egyptian voices "Shakir" and "Salma" — the same voices we picked for the final Azure version.
-// Later (phase 4): pre-rendered Azure mp3 files per line; `speak()` already accepts a file URL and prefers it.
+// Every line has a pre-rendered Azure neural voice file (audio/v/); the browser's own voice is only a fallback.
 
 const ROLES = {
   // pitch/rate shape a character on top of the chosen voice
@@ -62,12 +62,20 @@ export function createSpeech(audio) {
     current = job;
 
     if (opts.file) {
-      fileAudio = new Audio(opts.file);
-      fileAudio.addEventListener('timeupdate', () => { if (fileAudio && fileAudio.duration) job.onProgress?.(fileAudio.currentTime / fileAudio.duration); });
-      fileAudio.addEventListener('ended', finish);
-      fileAudio.play().then(() => audio.duck(true)).catch(() => { fileAudio = null; finish(); });
+      const a = new Audio(opts.file);
+      fileAudio = a;
+      a.addEventListener('timeupdate', () => { if (fileAudio === a && a.duration) job.onProgress?.(a.currentTime / a.duration); });
+      a.addEventListener('ended', finish);
+      // the recorded voice could not play (missing file, blocked): use the device's own voice, or just finish
+      const fallback = () => { if (fileAudio !== a || job.ended) return; fileAudio = null; if (!(opts.text && speakSynth(opts, job, finish))) finish(); };
+      a.addEventListener('error', fallback);
+      a.play().then(() => audio.duck(true)).catch(fallback);
       return true;
     }
+    return speakSynth(opts, job, finish);
+  }
+
+  function speakSynth(opts, job, finish) {
     if (!synth) return false;
     loadVoices();
     const voice = pickVoice(opts.lang, opts.role);

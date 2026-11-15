@@ -7,7 +7,7 @@ async def main():
         pg = await b.new_page(viewport={"width":1280,"height":760}); errs=[]
         pg.on("pageerror", lambda e: errs.append("pageerror:"+str(e)))
         pg.on("console", lambda m: errs.append(m.type+":"+m.text) if m.type in ("error","warning","log") and "GPU stall" not in m.text else None)
-        await pg.goto("http://localhost:8777/index.html?dtmax=0.25")
+        await pg.goto("http://localhost:8777/index.html?dtmax=0.25&lang=ar")
         await pg.wait_for_function("window.__tlf && window.__tlf.ready", timeout=180000)
         await pg.wait_for_function("window.__tlf.surfaceReady", timeout=180000); await pg.evaluate("__tlf.goSurface()")
         await pg.wait_for_timeout(1500)

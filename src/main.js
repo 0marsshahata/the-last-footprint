@@ -23,12 +23,13 @@ const $ = (s) => document.querySelector(s);
 const params = new URLSearchParams(location.search);
 const DT_MAX = Number(params.get('dtmax')) || 1 / 20;
 const DEBUG = params.has('debug') || location.hash.includes('debug');
+const VOICE_FILES = !params.has('nofiles'); // ?nofiles tests the device-voice fallback
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || params.has('reduced');
 const isMobile = Math.min(window.innerWidth, window.innerHeight) < 600 || /Android|iPhone|iPad/i.test(navigator.userAgent);
 
 const S = {
-  // ?lang=en / ?lang=ar wins (handy for sharing an English link with judges), then the saved choice, then Arabic
-  lang: (() => { const q = params.get('lang'); if (q === 'ar' || q === 'en') return q; try { return localStorage.getItem('tlf-lang') || 'ar'; } catch (e) { return 'ar'; } })(),
+  // ?lang=en / ?lang=ar wins (handy for sharing an English link with judges), then the saved choice, then English
+  lang: (() => { const q = params.get('lang'); if (q === 'ar' || q === 'en') return q; try { return localStorage.getItem('tlf-lang') || 'en'; } catch (e) { return 'en'; } })(), // English first (international judges); Arabic is one tap away
   stage: 'loading', surfaceReady: false, fade: 1, fadeTarget: 1, fadeSpeed: 1,
   focus: 1, mode: 'loading', charge: 0, holding: false,
   awake: [false, false, false], line: [0, 0, 0], badges: new Set(), done: false,
@@ -364,9 +365,8 @@ function showLine(i, n) {
   ui.next.textContent = n + 1 < r.data.lines.length ? T('next', L) : T('again', L);
   const full = L === 'ar' ? line.ar : line.en;
   const job = { onProgress: (f) => { if (typing.job === job) typing.progress = f; } };
-  const voiced = L === 'en' && line.audio_en
-    ? speech.speak({ ...job, file: line.audio_en })
-    : speech.speak({ ...job, lang: L, role: r.id, text: ttsText(L === 'ar' ? (line.tts_ar || line.ar) : line.en, L) });
+  // a recorded Azure voice per line; the device's own voice only if the file cannot play
+  const voiced = speech.speak({ ...job, file: VOICE_FILES ? `audio/v/${r.id}_${n + 1}_${L}.mp3` : null, lang: L, role: r.id, text: ttsText(L === 'ar' ? (line.tts_ar || line.ar) : line.en, L) });
   typing = makeTyping(full, voiced, L);
   typing.job = job;
   ui.text.textContent = reduceMotion ? full : '';
@@ -715,6 +715,10 @@ const guideUI = {
   root: $('#guide'), text: $('#guide-text'), chips: $('#guide-chips'), land: $('#guide-land'), back: $('#guide-back'),
   typing: { full: '', shown: 0, acc: 0 }, after: null, selected: null,
 };
+// SOL's lines that have a recorded voice (tools/lines.mjs renders exactly these)
+const SOL_VOICED = new Set(['guideHello', 'guideChoose', 'guide_sojourner', 'guide_spirit', 'guide_opportunity', 'endA', 'endB', 'endC',
+  'expHello', 'expPad', 'expLaunched', 'expCruise1', 'expCruise2', 'expMars', 'expApproach', 'expEntry', 'expEntryOk',
+  'edlChute', 'edlEarly', 'edlChuteLate', 'edlChuteOk', 'edlBags', 'edlBagsEarly', 'edlBagsLate', 'edlBagsOk', 'edlBounce', 'edlOpened', 'edlNow']);
 function guideSay(key, then) {
   const full = T(key, S.lang);
   const el = S.stage === 'ending' ? endUI.text : (S.stage === 'exp' || S.stage === 'edl') ? expUI.text : guideUI.text;
@@ -722,7 +726,7 @@ function guideSay(key, then) {
     onProgress: (f) => { if (guideUI.typing.job === job) guideUI.typing.progress = f; },
     onEnd: () => { if (guideUI.typing.job === job) guideUI.typing.spoken = true; },
   };
-  const voiced = speech.speak({ ...job, lang: S.lang, role: 'sol', text: ttsText(full, S.lang) });
+  const voiced = speech.speak({ ...job, file: VOICE_FILES && SOL_VOICED.has(key) ? `audio/v/sol_${key}_${S.lang}.mp3` : null, lang: S.lang, role: 'sol', text: ttsText(full, S.lang) });
   guideUI.typing = makeTyping(full, voiced, S.lang, 1.04);
   Object.assign(guideUI.typing, { key, job, spoken: !voiced, el, then, stage: S.stage });
   el.textContent = reduceMotion ? full : '';

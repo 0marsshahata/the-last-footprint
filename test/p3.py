@@ -13,7 +13,7 @@ async def main():
             ts = await pg.evaluate("(()=>{const t=__tlf.S.timeScale; __tlf.S.timeScale=0; return t})()")
             await pg.wait_for_timeout(500); await pg.screenshot(path=OUT+tag+name+".png")
             await pg.evaluate(f"__tlf.S.timeScale={ts}")
-        if lang=='en': await pg.add_init_script("localStorage.setItem('tlf-lang','en')")
+        await pg.add_init_script(f"localStorage.setItem('tlf-lang','{lang}')")
         await pg.goto("http://localhost:8777/index.html?dtmax=0.25")
         await pg.wait_for_function("window.__tlf && window.__tlf.ready", timeout=180000)
         await pg.click("#start")

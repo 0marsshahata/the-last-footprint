@@ -29,7 +29,7 @@ async def main():
         pg.on("pageerror", lambda e: errs.append(str(e)))
         pg.on("console", lambda m: errs.append(m.text) if m.type=="error" else None)
         await pg.add_init_script(MOCK)
-        await pg.goto("http://localhost:8777/index.html?dtmax=0.25")
+        await pg.goto("http://localhost:8777/index.html?dtmax=0.25&lang=ar&nofiles")
         await pg.wait_for_function("window.__tlf && window.__tlf.ready && window.__tlf.surfaceReady", timeout=240000)
         await pg.evaluate("__tlf.S.timeScale=3"); await pg.click("#start")
         await pg.wait_for_function("__tlf.S.stage==='home' && __tlf.opening.t>5", timeout=180000, polling=50)

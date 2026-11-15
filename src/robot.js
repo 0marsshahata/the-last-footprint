@@ -14,12 +14,12 @@ export function buildGuide(renderer) {
   const body = new THREE.Group();      // bobbing / tilting
   root.add(body);
 
-  const shell = new THREE.MeshStandardMaterial({ color: '#f3efe9', roughness: 0.28, metalness: 0.05, envMap: env, envMapIntensity: 1.1 });
+  const shell = new THREE.MeshStandardMaterial({ color: '#d9d3cb', roughness: 0.38, metalness: 0.05, envMap: env, envMapIntensity: 0.55 });
   const trim = new THREE.MeshStandardMaterial({ color: '#2a2f3a', roughness: 0.45, metalness: 0.4, envMap: env, envMapIntensity: 0.9 });
-  const visor = new THREE.MeshStandardMaterial({ color: '#06090d', roughness: 0.08, metalness: 0.2, envMap: env, envMapIntensity: 1.4 });
-  const amber = new THREE.MeshStandardMaterial({ color: '#ffb36b', roughness: 0.35, envMap: env, emissive: '#ff8a3d', emissiveIntensity: 0.25 });
-  const eyeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6, 3.6, 4.4), toneMapped: false });
-  const tipMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 2.2, 0.9), toneMapped: false });
+  const visor = new THREE.MeshStandardMaterial({ color: '#06090d', roughness: 0.12, metalness: 0.2, envMap: env, envMapIntensity: 0.8 });
+  const amber = new THREE.MeshStandardMaterial({ color: '#ffb36b', roughness: 0.35, envMap: env, emissive: '#ff8a3d', emissiveIntensity: 0.12 });
+  const eyeMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.9, 2.0, 2.5), toneMapped: false });
+  const tipMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.2, 1.2, 0.5), toneMapped: false });
 
   // head
   const head = new THREE.Group(); head.position.y = 0.16; body.add(head);
@@ -61,7 +61,7 @@ export function buildGuide(renderer) {
     gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.4, 'rgba(255,200,140,0.5)'); gr.addColorStop(1, 'rgba(255,140,60,0)');
     g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
   })();
-  const flame = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: new THREE.Color(2.4, 1.5, 0.8), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
+  const flame = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: new THREE.Color(1.4, 0.9, 0.5), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
   flame.position.y = -0.42; flame.scale.set(0.22, 0.3, 1); body.add(flame);
 
   root.traverse((o) => { o.frustumCulled = false; if (o.isMesh || o.isSprite) o.renderOrder = 30; });

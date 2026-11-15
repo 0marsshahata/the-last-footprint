@@ -1,0 +1,55 @@
+import asyncio, sys, json
+from playwright.async_api import async_playwright
+W,H = (int(sys.argv[1]), int(sys.argv[2])) if len(sys.argv)>2 else (1280,760)
+tag = sys.argv[3] if len(sys.argv)>3 else 'd'
+q = sys.argv[4] if len(sys.argv)>4 else ''
+OUT="shots/"
+async def main():
+    async with async_playwright() as p:
+        b = await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox","--use-gl=angle","--use-angle=swiftshader","--enable-unsafe-swiftshader","--ignore-gpu-blocklist","--autoplay-policy=no-user-gesture-required"])
+        ctx = await b.new_context(viewport={"width":W,"height":H}, device_scale_factor=1, is_mobile=W<600, has_touch=W<600)
+        pg = await ctx.new_page()
+        errs=[]
+        pg.on("pageerror", lambda e: errs.append("pageerror:"+str(e)))
+        pg.on("console", lambda m: errs.append(m.type+":"+m.text) if m.type in("error","warning") and "GPU stall" not in m.text else None)
+        pg.on("response", lambda r: errs.append("404:"+r.url) if r.status>=400 else None)
+        async def shot(name):
+            ts = await pg.evaluate("(()=>{const t=__tlf.S.timeScale; __tlf.S.timeScale=0; return t})()")
+            await pg.wait_for_timeout(400)
+            await pg.screenshot(path=OUT+tag+name+".png")
+            await pg.evaluate(f"__tlf.S.timeScale={ts}")
+        async def run_until(cond, timeout=180000):
+            await pg.wait_for_function(cond, timeout=timeout, polling=20)
+        await pg.goto(f"http://localhost:8777/index.html{q}")
+        await run_until("window.__tlf && window.__tlf.ready")
+        await pg.screenshot(path=OUT+tag+"0_loader.png")
+        await pg.wait_for_function("window.__tlf.surfaceReady", timeout=180000); await pg.evaluate("__tlf.goSurface()")
+        await pg.wait_for_timeout(1500); await shot("0b_intro")
+        await run_until("__tlf.S.mode==='hall'"); await pg.wait_for_timeout(600)
+        await shot("1_hall")
+        box = await pg.locator("#power").bounding_box()
+        await pg.mouse.move(box["x"]+box["width"]/2, box["y"]+box["height"]/2); await pg.mouse.down()
+        await run_until("__tlf.S.charge>0.5")
+        await shot("2_charging")
+        await run_until("__tlf.S.mode==='firing'")
+        await pg.mouse.up()
+        await pg.evaluate("__tlf.S.timeScale=0.15")
+        await pg.wait_for_timeout(500); await shot("3_beam")
+        await run_until("__tlf.S.awake[__tlf.S.focus]")
+        await shot("4_impact")
+        await pg.wait_for_timeout(1500); await shot("4b_wake")
+        await pg.evaluate("__tlf.S.timeScale=1")
+        await run_until("document.querySelector('#bubble').classList.contains('show')"); await pg.wait_for_timeout(3000)
+        await shot("5_awake")
+        await pg.evaluate("__tlf.S.timeScale=2.5")
+        await pg.click("#nav button:nth-child(1)")
+        await pg.wait_for_timeout(500); await shot("5b_moving")
+        await pg.wait_for_timeout(4000); await shot("6_soj")
+        await pg.click("#nav button:nth-child(3)")
+        await pg.wait_for_timeout(5000); await shot("7_opp")
+        g = await pg.evaluate("__tlf.rovers.map(r=>[r.id, r.u.uSleep.value.toFixed(2), r.u.uGlow.value.toFixed(3), r.u.uDim.value.toFixed(2)])")
+        print(g)
+        st = await pg.evaluate("({fps: __tlf.S.fps, pr: __tlf.S.pr, awake: __tlf.S.awake, mode: __tlf.S.mode})")
+        print(json.dumps(st)); print("errors:", errs[:15])
+        await b.close()
+asyncio.run(main())

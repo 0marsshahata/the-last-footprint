@@ -1,0 +1,9 @@
+{
+  "name": "the-last-footprint",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An interactive 3D story about NASA's silent Mars rovers. NASA Space Apps 2026 · Kafr El Sheikh · Team 3M",
+  "scripts": { "build": "python3 build.py", "serve": "python3 -m http.server 8000 -d docs" },
+  "dependencies": { "three": "^0.186.1" },
+  "devDependencies": { "esbuild": "^0.25.10" }
+}

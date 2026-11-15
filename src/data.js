@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 export const ROVERS = [
  {
   "id": "sojourner",

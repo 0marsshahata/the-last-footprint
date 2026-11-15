@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 const STR = {
   tagline: { ar: 'المهمة ممكن تخلص… بس أثرها بيفضل', en: 'A mission may end, but its footprint remains' },
   start: { ar: 'استقبل الإشارة', en: 'Receive the Signal' },

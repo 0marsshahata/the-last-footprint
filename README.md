@@ -68,7 +68,8 @@ We are open about how we used AI tools:
 - We used **Claude** (by Anthropic) as an assistant for coding, design and writing. Every decision was the team’s.
 - Character voices use Microsoft Azure neural text-to-speech (Egyptian Arabic and US English voices), not real people’s voices.
 - **SOL** is a fictional character we designed. Rover lines marked *Story* are fiction; lines marked *Fact* are checked against NASA.
-- All real photos are NASA’s and credited. No AI-generated image is presented as real.
+- All real photos are NASA’s and credited. No AI-generated image is presented as real, and no NASA logo or mission insignia was generated or modified.
+- **Labels inside the files:** every voice file in `docs/audio/v/` carries ID3 metadata marking it as AI-generated (Azure neural TTS, voice name, the line it speaks); every source file in `src/` and the built `app.js` start with an AI-disclosure comment; `index.html` has an `ai-disclosure` meta tag. Script: `tools/tag_audio.py`.
 
 ## How it is built
 

@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 // The Mars Explorer certificate, drawn on a canvas so it can be downloaded as a PNG.
 import { T } from './ui.js';
 

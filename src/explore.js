@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 import { TIMELINES, SOL18, QUIZ, CARDS, SOURCES, COMPARE } from './content.js';
 import { T } from './ui.js';
 

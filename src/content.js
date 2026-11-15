@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 // Explore panels, the Sol-18 game, the quiz, the ending and the About page.
 // Every date and number here was checked against NASA sources (listed in SOURCES).
 

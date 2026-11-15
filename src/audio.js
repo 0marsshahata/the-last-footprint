@@ -1,4 +1,5 @@
-// All sound is synthesized with WebAudio (no files) except the English narration mp3s.
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
+// All sound effects are synthesized with WebAudio (no files); character voices are AI-generated mp3s in audio/v/.
 export function createAudio() {
   let ctx = null, master = null, muted = false, meter = null, ambBus = null;
   let chargeOsc = null, chargeOsc2 = null, chargeGain = null, chargeFilter = null;

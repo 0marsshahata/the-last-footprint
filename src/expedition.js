@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 import * as THREE from 'three';
 
 // Immersive Expedition, space part: Spirit's real trip in 2003–2004.

@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 // Where the Sun is over Mars right now — NASA GISS "Mars24" algorithm (Allison & McEwen 2000).
 // Gives the subsolar point (planetocentric latitude / east longitude) so the globe's day and night are real.
 const d2r = Math.PI / 180;

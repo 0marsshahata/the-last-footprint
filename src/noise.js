@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 // Small deterministic value-noise helpers (CPU side), used to shape terrain and place rocks.
 export function mulberry32(seed) {
   let a = seed >>> 0;

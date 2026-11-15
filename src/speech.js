@@ -1,3 +1,4 @@
+// AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 // Voices for SOL and the rovers.
 // Today: the browser's own speech engine (Web Speech API). In Microsoft Edge this includes Microsoft's
 // natural Egyptian voices "Shakir" and "Salma" — the same voices we picked for the final Azure version.

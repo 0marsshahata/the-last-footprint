@@ -22,7 +22,20 @@ function glowTexture() {
 
 export const WINDOWS = { chute: [11.5, 8.5], bags: [10, 6] }; // km of altitude, seconds before touchdown
 
-export function buildEDL(scene) {
+// the lander's petals: grey-white panels with seams, a gold-foil edge
+function petalTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d');
+  g.fillStyle = '#cfcac0'; g.fillRect(0, 0, 256, 256);
+  g.strokeStyle = 'rgba(60,55,50,0.4)'; g.lineWidth = 2;
+  for (let i = 1; i < 6; i++) { g.beginPath(); g.moveTo(0, i * 42); g.lineTo(256, i * 42); g.stroke(); }
+  for (let i = 1; i < 6; i++) { g.beginPath(); g.moveTo(i * 42, 0); g.lineTo(i * 42, 256); g.stroke(); }
+  g.fillStyle = 'rgba(0,0,0,0.06)'; for (let i = 0; i < 18; i++) g.fillRect(Math.random() * 256, Math.random() * 256, 30, 20);
+  g.fillStyle = '#c9a24e'; g.fillRect(0, 0, 256, 12);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+export function buildEDL(scene, { rover = null, env = null } = {}) {
   const root = new THREE.Group(); root.visible = false; scene.add(root);
   const glow = glowTexture();
 
@@ -53,10 +66,11 @@ export function buildEDL(scene) {
 
   // lander: a small tetrahedron with three petals, wrapped in airbags
   const lander = new THREE.Group(); root.add(lander);
-  const petalMat = new THREE.MeshStandardMaterial({ color: '#c8a35a', roughness: 0.55, metalness: 0.45, side: THREE.DoubleSide });
-  const baseMat = new THREE.MeshStandardMaterial({ color: '#8b8f96', roughness: 0.6, metalness: 0.4, side: THREE.DoubleSide });
+  const pTex = petalTexture();
+  const petalMat = new THREE.MeshStandardMaterial({ map: pTex, roughness: 0.7, metalness: 0.2, side: THREE.DoubleSide, envMap: env, envMapIntensity: 0.4 });
+  const baseMat = new THREE.MeshStandardMaterial({ map: pTex, color: '#a9a49c', roughness: 0.7, metalness: 0.25, side: THREE.DoubleSide, envMap: env, envMapIntensity: 0.4 });
   const S = 1.15, H = S * Math.sqrt(3) / 2; // side length, triangle height
-  const tri = (h) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute([-S / 2, 0, 0, S / 2, 0, 0, 0, h, 0], 3)); g.computeVertexNormals(); return g; };
+  const tri = (h) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute([-S / 2, 0, 0, S / 2, 0, 0, 0, h, 0], 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0.5, 1], 2)); g.computeVertexNormals(); return g; };
   const base = new THREE.Mesh(tri(H), baseMat); base.rotation.x = -Math.PI / 2; base.position.z = H / 3; lander.add(base);
   const petals = [];
   const closed = -Math.acos(1 / 3) + Math.PI / 2; // tilt that closes a regular tetrahedron
@@ -67,6 +81,18 @@ export function buildEDL(scene) {
     arm.rotation.x = -closed; petals.push(arm); lander.add(hinge);
   }
   lander.position.y = 0.05;
+  // Spirit, folded on the base petal; it stands up once the petals are open
+  let roverObj = null;
+  if (rover) {
+    roverObj = new THREE.Group();
+    const r = rover.clone(true);
+    r.traverse((o) => { if (o.isMesh) { o.material = Array.isArray(o.material) ? o.material.map((m) => m.clone()) : o.material.clone(); [o.material].flat().forEach((m) => { if (m.isMeshStandardMaterial) { m.envMap = env; m.envMapIntensity = 0.5; } }); o.castShadow = false; o.receiveShadow = false; } });
+    const box = new THREE.Box3().setFromObject(r), size = box.getSize(new THREE.Vector3()), c = box.getCenter(new THREE.Vector3());
+    const k = 0.78 / Math.max(size.x, size.z); // about the size of the base (the real rover drove off over a petal)
+    r.scale.setScalar(k); r.position.set(-c.x * k, -box.min.y * k, -c.z * k);
+    roverObj.add(r); roverObj.position.set(0, 0.012, 0); roverObj.visible = false;
+    lander.add(roverObj);
+  }
   // airbags: 4 bags × 6 lobes on the real landers; here 24 lumps merged into one mesh
   const bagGeo = (() => {
     const parts = []; const ico = new THREE.IcosahedronGeometry(1, 1); const p = ico.attributes.position; const seen = new Set(); const v = new THREE.Vector3();
@@ -108,6 +134,7 @@ export function buildEDL(scene) {
     rockets.forEach((r) => { r.material.opacity = 0; });
     petals.forEach((p) => { p.rotation.x = -closed; });
     lander.visible = false; bridle.visible = false; puff.material.opacity = 0;
+    if (roverObj) { roverObj.visible = false; roverObj.scale.set(1, 0.72, 1); }
   }
   function start(onEvent) { st.onEvent = onEvent; reset(); st.phase = 'fall'; st.t = 0; root.visible = true; }
   function stop() { st.phase = 'idle'; root.visible = false; }
@@ -226,8 +253,13 @@ export function buildEDL(scene) {
       const o = smooth(1.4, 3.4, st.t);
       petals.forEach((p) => { p.rotation.x = THREE.MathUtils.lerp(-closed, Math.PI / 2 - 0.12, o); });
       bags.visible = k < 0.98;
+      if (roverObj) {
+        roverObj.visible = o > 0.05;
+        roverObj.scale.y = 0.72 + 0.28 * smooth(3.0, 4.2, st.t); // the mast rises: "standing up"
+      }
       camPos.lerp(tmp.copy(lander.position).add(new THREE.Vector3(3.2, 2.2, 5.5)), Math.min(1, dt * 1.5)); camLook.lerp(lander.position, Math.min(1, dt * 2));
       if (st.t > 3.8) once('opened');
+      if (roverObj && st.t > 3.4) { const r = smooth(3.4, 6, st.t); camPos.lerp(tmp.copy(lander.position).add(new THREE.Vector3(1.4, 0.95, 2.3)), Math.min(1, dt * 0.9 * r)); camLook.lerp(tmp.copy(lander.position).add(new THREE.Vector3(0, 0.25, 0)), Math.min(1, dt * r)); }
     }
 
     if (bridle.visible) {

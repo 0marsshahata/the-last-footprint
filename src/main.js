@@ -14,6 +14,7 @@ import { ROVERS } from './data.js';
 import { T, applyLang } from './ui.js';
 import { buildOpening, SITES, ACTIVE_SITES } from './opening.js';
 import { createExplore } from './explore.js';
+import { createFinale } from './finale.js';
 import { drawCertificate } from './cert.js';
 import { buildExpedition } from './expedition.js';
 import { buildEDL } from './edl.js';
@@ -33,7 +34,7 @@ const S = {
   lang: (() => { const q = params.get('lang'); if (q === 'ar' || q === 'en') return q; try { return localStorage.getItem('tlf-lang') || 'en'; } catch (e) { return 'en'; } })(), // English first (international judges); Arabic is one tap away
   stage: 'loading', surfaceReady: false, fade: 1, fadeTarget: 1, fadeSpeed: 1,
   focus: 1, mode: 'loading', charge: 0, holding: false,
-  awake: [false, false, false], line: [0, 0, 0], badges: new Set(), done: false,
+  awake: [false, false, false], line: [0, 0, 0], badges: new Set(), done: false, quiz: null,
   fps: 0, pr: 1, started: false, timeScale: 1,
 };
 const audio = createAudio();
@@ -195,6 +196,7 @@ function loadScript(src) {
   });
 }
 
+let merTpl = null; // the raw rover model, reused for Spirit on the landing petals
 async function loadRovers() {
   if (!window.MER_GLB_B64) { try { await loadScript('models/mer-model.js'); } catch (e) { console.warn(e); } }
   let url = './models/MER.glb';
@@ -204,7 +206,7 @@ async function loadRovers() {
   }
   let tpl;
   try {
-    tpl = await loadMER(url);
+    tpl = await loadMER(url); merTpl = tpl;
   } catch (err) {
     console.warn('MER model failed, using fallback', err);
   }
@@ -430,7 +432,7 @@ document.addEventListener('click', (e) => {
 });
 const isTyping = () => { const a = document.activeElement; return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable); };
 const kbButtonFocused = () => { const a = document.activeElement; return a && a.tagName === 'BUTTON' && a !== ui.power; };
-const overlayOpen = () => explore.isOpen || !$('#cert').hidden;
+const overlayOpen = () => explore.isOpen || finale.isOpen || !$('#cert').hidden;
 window.addEventListener('keydown', (e) => {
   if (isTyping() || overlayOpen()) return;
   if ((S.stage === 'exp' || S.stage === 'edl') && (e.code === 'Space' || (e.code === 'Enter' && document.activeElement === expUI.act))) {
@@ -488,7 +490,7 @@ $('#lang').addEventListener('click', () => {
   try { localStorage.setItem('tlf-lang', S.lang); } catch (e) {}
   applyLang(S.lang); renderTag();
   opening.resize(S.lang); rebuildTitle(); renderCounter(); renderSiteStatus();
-  layoutGuide(); renderChips(); renderJourney(); explore.refresh();
+  layoutGuide(); renderChips(); renderJourney(); explore.refresh(); finale.refresh();
   if ((S.stage === 'pick' || S.stage === 'ending' || S.stage === 'exp' || S.stage === 'edl') && guideUI.typing.key) guideSay(guideUI.typing.key, guideUI.typing.then);
   renderExpButton(); renderExpHUD(true); if (xp.step) setStep(xp.step);
   if (ui.bubble.classList.contains('show')) showLine(S.focus, S.line[S.focus]);
@@ -689,7 +691,7 @@ async function boot() {
   window.__tlf.ready = true;
   // the surface (rovers, terrain) loads in the background while the opening plays
   await loadRovers();
-  edl = buildEDL(scene);
+  edl = buildEDL(scene, { rover: merTpl, env: envTex });
   renderTag();
   camera.position.copy(cam.pos); camera.lookAt(cam.look);
   await compileHidden(scene, camera);
@@ -1060,6 +1062,7 @@ const explore = createExplore({
   audio,
   onBadge: (k) => { if (S.badges.has(k)) return; S.badges.add(k); toast('★ ' + T('savedSpirit', S.lang)); },
   onClose: () => document.body.classList.remove('sheet-open'),
+  onLegacy: (i) => finale.openLegacy({ mode: 'explore', at: i }),
 });
 ui.explore.addEventListener('click', () => {
   if (S.stage !== 'surface' || !S.awake[S.focus]) return;
@@ -1101,7 +1104,28 @@ function renderJourney() {
 }
 
 // ---------- ending: "The Next Footprint" ----------
-const endUI = { root: $('#ending'), text: $('#end-text'), form: $('#end-form'), name: $('#end-name'), err: $('#end-err'), busy: false };
+const endUI = { root: $('#ending'), text: $('#end-text'), form: $('#end-form'), name: $('#end-name'), err: $('#end-err'), steps: $('#end-steps'), busy: false };
+// after SOL's first two lines: the chain of missions, then the final quiz, then the name and the certificate
+const finale = createFinale({
+  getLang: () => S.lang, audio,
+  onQuizDone: (score, total) => {
+    S.quiz = score == null ? null : { score, total };
+    if (S.stage !== 'ending' || !endUI.form.hidden) return;
+    endUI.steps.hidden = true; layoutGuide();
+    guideSay('endC', showEndForm);
+  },
+  onLegacyClosed: (mode) => { if (mode === 'ending' && S.stage === 'ending' && endUI.form.hidden) { endUI.steps.hidden = false; layoutGuide(); } },
+});
+function showEndSteps() {
+  if (S.stage !== 'ending') return;
+  endUI.steps.hidden = false; layoutGuide();
+  later(reduceMotion ? 0.1 : 0.6, () => { if (S.stage === 'ending' && endUI.form.hidden && !finale.isOpen) finale.openLegacy({ mode: 'ending' }); });
+}
+$('#end-legacy').addEventListener('click', () => finale.openLegacy({ mode: 'ending' }));
+$('#end-skip').addEventListener('click', () => {
+  finale.close(); endUI.steps.hidden = true; layoutGuide();
+  guideSay('endC', showEndForm);
+});
 const cert = { root: $('#cert'), img: $('#cert-img'), dl: $('#cert-dl'), url: null, back: null };
 function goEnding() {
   if (S.stage !== 'surface' || S.mode !== 'hall' || !allAwake()) return;
@@ -1112,10 +1136,10 @@ function goEnding() {
     setStage('ending'); measureLabels();
     audio.setAmbient('space');
     opening.resize(S.lang); opening.enterEnding();
-    endUI.form.hidden = true; endUI.text.textContent = '';
+    endUI.form.hidden = true; endUI.steps.hidden = true; endUI.text.textContent = ''; S.quiz = null;
     layoutGuide(); guide.show();
     fadeTo(1, reduceMotion ? 0.3 : 1);
-    later(reduceMotion ? 0.2 : 1.4, () => { if (S.stage === 'ending') guideSay('endA', () => guideSay('endB', () => guideSay('endC', showEndForm))); });
+    later(reduceMotion ? 0.2 : 1.4, () => { if (S.stage === 'ending') guideSay('endA', () => guideSay('endB', showEndSteps)); });
   });
 }
 function showEndForm() {
@@ -1139,7 +1163,7 @@ endUI.form.addEventListener('submit', async (e) => {
   endUI.busy = true;
   audio.chime();
   await fontsReady();
-  const c = drawCertificate(name, S.lang, new Date(), [...S.badges]);
+  const c = drawCertificate(name, S.lang, new Date(), [...S.badges], S.quiz);
   c.toBlob((blob) => {
     endUI.busy = false;
     if (!blob) return;
@@ -1180,14 +1204,14 @@ cert.dl.addEventListener('click', async (e) => {
 // start the whole journey again, without reloading the page
 function replay() {
   if (!cert.root.hidden) closeCert();
-  speech.stop(); guide.hide(); guideUI.after = null;
-  S.awake = [false, false, false]; S.line = [0, 0, 0]; S.done = false; S.badges.clear(); S.focus = 1;
+  speech.stop(); guide.hide(); guideUI.after = null; finale.close();
+  S.awake = [false, false, false]; S.line = [0, 0, 0]; S.done = false; S.badges.clear(); S.focus = 1; S.quiz = null;
   rovers.forEach((r) => {
     r.u.uSleep.value = 1; r.u.uGlow.value = 0; r.wakeT = -1; r.push = 1;
     r.yaw = r.baseYaw; r.yawVel = 0; r.pivot.rotation.y = r.baseYaw; r.pivot.position.y = r.baseY; r.model.rotation.z = 0;
   });
   shadowFrames = 2;
-  endUI.form.hidden = true; endUI.name.value = ''; endUI.err.textContent = ''; endUI.name.removeAttribute('aria-invalid');
+  endUI.form.hidden = true; endUI.steps.hidden = true; endUI.name.value = ''; endUI.err.textContent = ''; endUI.name.removeAttribute('aria-invalid');
   fadeTo(0, 0.45);
   later(0.5, () => {
     setStage('home'); opening.goHome(S.lang); audio.setAmbient('space');
@@ -1226,7 +1250,7 @@ if (bench.on) runBench();
 
 window.__tlf = {
   ready: false, surfaceReady: false, S, rovers, renderer, focusRover, opening, receiveSignal, startWarp, setStage,
-  selectSite, enterPick, backHome, audio, speech, explore, goEnding, replay, renderJourney,
+  selectSite, enterPick, backHome, audio, speech, explore, finale, goEnding, replay, renderJourney,
   startExpedition: () => startExpedition(), get expd() { return expd; }, get edl() { return edl; }, expPress: (d) => expPress(d), leaveExpedition: (w) => leaveExpedition(w),
   goSurface: () => { S.started = true; document.body.classList.add('started'); enterSurface(); },
   wakeNow: () => { if (S.mode === 'hall' && !S.awake[S.focus]) { S.charge = 1; firePulse(); } },

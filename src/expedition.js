@@ -26,10 +26,53 @@ function glowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function softPuff() {
+  const c = document.createElement('canvas'); c.width = c.height = 64;
+  const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(255,255,255,0.9)'); gr.addColorStop(0.45, 'rgba(255,255,255,0.45)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+
+// the backshell's thermal blanket: off-white panels with seams
+let shellTex = null;
+function shellTexture() {
+  if (shellTex) return shellTex;
+  const c = document.createElement('canvas'); c.width = 512; c.height = 128;
+  const g = c.getContext('2d');
+  g.fillStyle = '#ebe7df'; g.fillRect(0, 0, 512, 128);
+  for (let i = 0; i < 16; i++) { g.fillStyle = `rgba(0,0,0,${0.025 + (i % 3) * 0.015})`; g.fillRect(i * 32, 0, 32, 128); }
+  g.strokeStyle = 'rgba(70,60,50,0.35)'; g.lineWidth = 2;
+  for (let i = 0; i <= 16; i++) { g.beginPath(); g.moveTo(i * 32, 0); g.lineTo(i * 32, 128); g.stroke(); }
+  for (const y of [38, 86]) { g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
+  g.fillStyle = 'rgba(60,50,40,0.5)';
+  for (let i = 0; i < 16; i++) for (const y of [38, 86]) { g.beginPath(); g.arc(i * 32 + 16, y, 2, 0, Math.PI * 2); g.fill(); }
+  shellTex = new THREE.CanvasTexture(c); shellTex.colorSpace = THREE.SRGBColorSpace; shellTex.wrapS = THREE.RepeatWrapping;
+  return shellTex;
+}
+// the cruise stage's solar array: a ring of blue cells with silver gaps, seen on the flat side of the disk
+function cellsDisk() {
+  const c = document.createElement('canvas'); c.width = c.height = 512;
+  const g = c.getContext('2d');
+  g.fillStyle = '#b9bcc2'; g.fillRect(0, 0, 512, 512);
+  const R = 256, r0 = 92;
+  for (let ring = 0; ring < 7; ring++) {
+    const a0 = r0 + ring * 23, a1 = a0 + 21, n = 28 + ring * 6;
+    for (let k = 0; k < n; k++) {
+      const t0 = (k / n) * Math.PI * 2 + 0.004, t1 = ((k + 1) / n) * Math.PI * 2 - 0.004;
+      const sh = 34 + ((k * 7 + ring * 11) % 7) * 4;
+      g.fillStyle = `rgb(${sh - 14},${sh + 4},${sh + 58})`;
+      g.beginPath(); g.arc(R, R, a1, t0, t1); g.arc(R, R, a0, t1, t0, true); g.closePath(); g.fill();
+    }
+  }
+  g.fillStyle = '#7d8189'; g.beginPath(); g.arc(R, R, r0 - 6, 0, Math.PI * 2); g.fill();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
 // the spacecraft as it flew: cruise stage (solar cells) on top of the aeroshell (backshell + heat shield)
 export function buildCapsule(env) {
   const g = new THREE.Group();
-  const white = new THREE.MeshStandardMaterial({ color: '#e9e6e0', roughness: 0.45, metalness: 0.25, envMap: env || null, envMapIntensity: 0.6 });
+  const white = new THREE.MeshStandardMaterial({ color: '#ffffff', map: shellTexture(), roughness: 0.55, metalness: 0.15, envMap: env || null, envMapIntensity: 0.6 });
   const shieldMat = new THREE.MeshStandardMaterial({ color: '#9a6440', roughness: 0.8, metalness: 0.05, emissive: new THREE.Color('#ff6a1a'), emissiveIntensity: 0 });
   const dark = new THREE.MeshStandardMaterial({ color: '#2b2f36', roughness: 0.6, metalness: 0.5 });
   // heat shield: a wide, shallow cone pointing forward (+y)
@@ -123,8 +166,9 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
   const craft = new THREE.Group(); craft.add(cap.group);
   const cruise = new THREE.Group(); // the cruise stage, released before entry
   {
-    const cells = new THREE.MeshStandardMaterial({ color: '#1d3f8a', roughness: 0.3, metalness: 0.6, emissive: '#0a1a40', emissiveIntensity: 0.4 });
-    const disk = new THREE.Mesh(new THREE.CylinderGeometry(1.32, 1.32, 0.16, 48), [cap.white, cap.dark, cells]); // side, top, bottom (cells face away from the aeroshell)
+    const cells = new THREE.MeshStandardMaterial({ map: cellsDisk(), roughness: 0.28, metalness: 0.55, emissive: '#0a1430', emissiveIntensity: 0.25, envMap: env || null, envMapIntensity: 0.9 });
+    const rim = new THREE.MeshStandardMaterial({ color: '#c9ccd2', roughness: 0.35, metalness: 0.7, envMap: env || null, envMapIntensity: 0.8 });
+    const disk = new THREE.Mesh(new THREE.CylinderGeometry(1.32, 1.32, 0.16, 64), [rim, cap.dark, cells]); // side, top, bottom (cells face away from the aeroshell)
     disk.position.y = -1.1; cruise.add(disk);
     const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.5, 8), cap.dark); mast.position.y = -1.42; cruise.add(mast);
     const dish = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.12, 24, 1, true), cap.white); dish.position.y = -1.66; dish.material.side = THREE.DoubleSide; cruise.add(dish);
@@ -145,6 +189,38 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
         gl_FragColor = vec4(c * a, a); }`,
   }));
   plasma.scale.set(1.25, 0.9, 1.25); plasma.position.y = 0.32; cap.group.add(plasma);
+
+  // launch smoke: soft puffs left behind in space, so the climb reads as a plume over Florida
+  const puffTex = softPuff();
+  const SMOKE = quality.mobile ? 48 : 80;
+  const smoke = [];
+  for (let i = 0; i < SMOKE; i++) {
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffTex, color: '#f4ece4', transparent: true, opacity: 0, depthWrite: false }));
+    sp.visible = false; scene.add(sp); smoke.push({ sp, life: 1, max: 1, size: 0.02, vel: new THREE.Vector3() });
+  }
+  let smokeNext = 0, smokeAcc = 0;
+  function puff(pos, size, life, vx, vy, vz) {
+    const p = smoke[smokeNext]; smokeNext = (smokeNext + 1) % SMOKE;
+    p.sp.position.copy(pos); p.size = size; p.life = 0; p.max = life; p.vel.set(vx, vy, vz); p.sp.visible = true;
+  }
+  function stepSmoke(dt) {
+    for (const p of smoke) {
+      if (!p.sp.visible) continue;
+      p.life += dt;
+      if (p.life >= p.max) { p.sp.visible = false; continue; }
+      const k = p.life / p.max;
+      p.sp.position.addScaledVector(p.vel, dt);
+      p.sp.scale.setScalar(p.size * (0.6 + 2.2 * Math.sqrt(k)));
+      p.sp.material.opacity = 0.55 * Math.min(1, p.life * 6) * (1 - k);
+    }
+  }
+  // entry wake: a short fiery tail streaming behind the heat shield
+  const WAKE = 9;
+  const wake = [];
+  for (let i = 0; i < WAKE; i++) {
+    const w = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: new THREE.Color(3.2, 1.5 - i * 0.1, 0.45), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0 }));
+    scene.add(w); wake.push(w);
+  }
 
   // launch trail
   const TRAIL = 80;
@@ -174,6 +250,7 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
     cruise.visible = true; cruise.position.set(0, 0, 0); cruise.rotation.set(0, 0, 0);
     plasma.material.uniforms.uK.value = 0; cap.shieldMat.emissiveIntensity = 0; flame.material.opacity = 0;
     trail.visible = false; trailN = 0;
+    smoke.forEach((p) => { p.sp.visible = false; }); wake.forEach((w) => { w.material.opacity = 0; });
     craft.position.copy(path.getPoint(0)); craft.quaternion.setFromUnitVectors(up, F);
     resize();
   }
@@ -193,12 +270,24 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
     earthSpin.rotation.y += dt * 0.004;
     plasma.material.uniforms.uT.value = time;
     const portrait = innerWidth < innerHeight * 0.95;
+    if (st.phase !== 'pad' && st.phase !== 'launch') smoke.forEach((p) => { if (p.sp.visible) p.life = Math.max(p.life, p.max - 0.5) + dt * 2; });
+    stepSmoke(dt);
+    const wakeOn = st.phase === 'entry' || st.phase === 'plunge';
+    if (!wakeOn) wake.forEach((w) => { w.material.opacity = Math.max(0, w.material.opacity - dt * 2); });
 
     if (st.phase === 'pad') {
       // the craft sits on the coast of Florida; holding the button builds up thrust
-      camPos.set(portrait ? 0.35 : 0.9, portrait ? -0.2 : 0.3, portrait ? 4.4 : 3.4); lookAt.set(portrait ? 0.08 : 0.42, portrait ? 0.32 : 0.12, 0);
-      flame.position.copy(craft.position); flame.scale.setScalar(0.02 + st.charge * 0.07);
+      camPos.set(portrait ? 0.3 : 0.62, portrait ? -0.05 : 0.22, portrait ? 3.0 : 2.25); lookAt.set(portrait ? 0.05 : 0.3, portrait ? 0.3 : 0.12, 0.45); // close on Florida, so the smoke and flame read
+      flame.position.copy(craft.position); flame.scale.setScalar(0.025 + st.charge * 0.09);
       flame.material.opacity = st.charge * (0.8 + Math.random() * 0.2);
+      // engines building up: smoke billows out along the ground
+      smokeAcc += dt * st.charge * 26;
+      while (smokeAcc > 1) {
+        smokeAcc--;
+        const a = Math.random() * Math.PI * 2;
+        tmp.copy(craft.position).multiplyScalar(0.999);
+        puff(tmp, 0.03 + Math.random() * 0.02, 1.6 + Math.random(), Math.cos(a) * 0.02, Math.sin(a) * 0.02, 0.006);
+      }
     }
     if (st.phase === 'launch') {
       const k = smooth(0, 5.5, st.t);
@@ -214,8 +303,11 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
       for (let i = trailN; i < TRAIL; i++) { trailPos[i * 3] = trailPos[0]; trailPos[i * 3 + 1] = trailPos[1]; trailPos[i * 3 + 2] = trailPos[2]; }
       trailGeo.attributes.position.needsUpdate = true; trailGeo.setDrawRange(0, trailN);
       trail.material.opacity = 0.9 * (1 - smooth(3.5, 5.5, st.t));
+      // a thick plume that stays behind and spreads
+      smokeAcc += dt * 40 * (1 - smooth(3.8, 5.2, st.t));
+      while (smokeAcc > 1) { smokeAcc--; puff(craft.position, 0.035 + k * 0.07, 2.6 + Math.random() * 0.8, (Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01, (Math.random() - 0.5) * 0.01); }
       // pull the camera back as the rocket climbs
-      camPos.lerp(tmp.set(portrait ? 0.6 : 1.6, portrait ? 0.4 : 0.8, portrait ? 5.6 : 4.4), Math.min(1, dt * 0.8));
+      camPos.lerp(tmp.set(portrait ? 0.6 : 1.6, portrait ? 0.4 : 0.8, portrait ? 5.6 : 4.4), Math.min(1, dt * 0.45 * smooth(0.6, 2.5, st.t)));
       lookAt.lerp(craft.position, Math.min(1, dt * 1.5));
       if (st.t > 5.6) { st.phase = 'cruise'; st.t = 0; trail.visible = false; emit('cruise'); }
     }
@@ -261,6 +353,12 @@ export function buildExpedition(renderer, { marsMap, quality, env, reduced }) {
       plasma.material.uniforms.uK.value = glow;
       cap.shieldMat.emissiveIntensity = glow * 1.6;
       const dir = tmp.subVectors(entryEnd, start).normalize();
+      for (let i = 0; i < WAKE; i++) {
+        const w = wake[i], f = i / WAKE;
+        w.position.copy(craft.position).addScaledVector(dir, -(0.004 + i * 0.0042));
+        w.scale.setScalar(0.026 * (1 - f * 0.65) * (0.9 + 0.2 * Math.random()));
+        w.material.opacity = Math.min(1, glow) * (1 - f) * 0.85;
+      }
       const side = tmp2.crossVectors(dir, up).normalize();
       camPos.lerp(new THREE.Vector3().copy(craft.position).addScaledVector(dir, -0.15).addScaledVector(side, -0.09).addScaledVector(up, 0.06), Math.min(1, dt * 3));
       lookAt.lerp(new THREE.Vector3().copy(craft.position).addScaledVector(dir, 0.05), Math.min(1, dt * 3));

@@ -21,7 +21,7 @@ English by default; Arabic is one tap away (the language button), or open https:
 2. **Cruise** for about 7 months and 487 million km, squeezed into half a minute. The day counter and the distance are real.
 3. **Atmospheric entry** at about 19,000 km/h. You hold the heat shield steady.
 4. **Parachute.** You open it at about 10 km altitude: too early and it could tear, too late and you crash.
-5. **Airbags.** You inflate them about 8 seconds before touchdown. Then the retro-rockets fire, the bridle is cut, and you bounce across Mars (the real Spirit bounced about 30 times). Finally the lander opens like a flower.
+5. **Airbags.** You inflate them about 8 seconds before touchdown. Then the retro-rockets fire, the bridle is cut, and you bounce across Mars (the real Spirit bounced about 30 times). Finally the lander opens like a flower and Spirit stands up on its base petal.
 
 Then you jump to **today**, where Spirit is silent, and you wake it.
 
@@ -30,11 +30,13 @@ Then you jump to **today**, where Spirit is silent, and you wake it.
 - **Power Pulse:** press and hold to charge your suit glove and wake a sleeping rover. It tells its story, and every line is labelled **Fact** or **Story**.
 - **Explore** each rover:
   - *My life on Mars*: how far each rover went past its planned end (Spirit: 90 planned sols, 2,208 actual).
-  - *That dot is us*: Earth photographed by Spirit from the surface of Mars (NASA PIA05547).
-  - *The day I almost died*: save Spirit from its Sol-18 memory crisis, the way the JPL engineers did.
-  - *Fact or myth?*: was “my battery is low and it’s getting dark” really Opportunity’s last message?
+  - **Sojourner:** the first wheels on another planet, how small it was, why it went silent, and what it passed on (the airbag landing and the six-wheel design).
+  - **Spirit:** *That dot is us* (Earth photographed from Mars, NASA PIA05547), *A discovery from a broken wheel* (silica from ancient hot springs), and *The day I almost died*: save Spirit from its Sol-18 memory crisis, the way the JPL engineers did.
+  - **Opportunity:** the hole-in-one landing in Eagle crater, the hematite “blueberries”, the meteorite and the gypsum veins at Endeavour, and *Fact or myth?*: was “my battery is low and it’s getting dark” really its last message?
   - *Compare us*: the three rovers side by side.
-- **The Next Footprint:** after you wake all three, the footprints continue to Curiosity and Perseverance, which are still exploring Mars today. Write your name and download your **Mars Explorer certificate**.
+- **From Footprint to Footprint:** after you wake all three, a chain shows what each mission found and what it passed on to the next: Sojourner (1997) → Spirit and Opportunity (2004) → Curiosity (2012) → Perseverance (2021) → you.
+- **What did you learn?** A five-question quiz checks the big ideas, with an explanation after every answer.
+- **The Next Footprint:** write your name and download your **Mars Explorer certificate**, with your quiz score on it.
 
 The journey bar at the top shows your five footprints.
 

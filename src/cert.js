@@ -17,7 +17,7 @@ function footprint(g, x, y, s, rot, color) {
   g.restore();
 }
 
-export function drawCertificate(name, lang, date = new Date(), badges = []) {
+export function drawCertificate(name, lang, date = new Date(), badges = [], quiz = null) {
   const W = 1600, H = 1100;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const g = c.getContext('2d');
@@ -70,9 +70,16 @@ export function drawCertificate(name, lang, date = new Date(), badges = []) {
   g.save(); g.shadowColor = '#7fe6ff'; g.shadowBlur = 40; footprint(g, W / 2 + 270, fy - 10, 1.45, 0.2, '#bff4ff'); g.restore();
   g.font = `600 24px ${DISPLAY}`; g.fillStyle = '#bff4ff'; g.fillText(ar ? 'أثرك' : 'YOU', W / 2 + 270, fy + 80);
 
-  if (badges.includes('sol18')) {
+  // earned extras, on one line: the Sol-18 rescue and the final quiz score
+  const extras = [];
+  if (badges.includes('sol18')) extras.push(ar ? '★ أنقذ Spirit في يوم ١٨' : '★ SAVED SPIRIT ON SOL 18');
+  if (quiz) {
+    const n = (v) => (ar ? String(v).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]) : String(v));
+    extras.push('★ ' + T('certQuiz', lang).replace('{n}', n(quiz.score)).replace('{t}', n(quiz.total)));
+  }
+  if (extras.length) {
     g.font = `600 24px ${ar ? ARABIC : DISPLAY}`; g.fillStyle = '#ffb36b';
-    g.fillText(ar ? '★ أنقذ Spirit في يوم ١٨' : '★ SAVED SPIRIT ON SOL 18', W / 2, fy + 172);
+    g.fillText(extras.join('   ·   '), W / 2, fy + 172);
   }
 
   // footer

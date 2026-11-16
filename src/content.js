@@ -85,14 +85,82 @@ export const QUIZ = [
 
 export const CARDS = {
   sojourner: [
+    { k: 'first', title: { ar: 'أول عجل على كوكب تاني', en: 'The first wheels on another planet' }, body: { ar: 'أنا أول عربية بعجل اشتغلت على كوكب غير الأرض. اتصممت أشتغل ٧ أيام، واشتغلت ٨٣ يوم. مشيت حوالي ١٠٠ متر، وحلّلت الصخور والتربة في ١٦ مكان حوالين المحطة، ولقيتها شبه الصخور البركانية اللي على الأرض. وصوّرت ٥٥٠ صورة.', en: 'I was the first wheeled vehicle ever driven on another planet. I was built for 7 days and worked for 83. I drove about 100 m, analysed rocks and soil at 16 places around the lander, and found they look like volcanic rocks on Earth. I also took 550 pictures.' } },
     { k: 'size', title: { ar: 'قد إيه أنا صغيرة؟', en: 'How small am I?' }, body: { ar: 'طولي حوالي ٦٥ سم ووزني حوالي ١٠٫٦ كيلو بس، قد شنطة سفر صغيرة. Spirit وOpportunity وزن الواحد فيهم حوالي ١٨٠ كيلو، يعني أتقل مني ١٧ مرة!', en: 'I’m about 65 cm long and weigh only about 10.6 kg — like a small suitcase. Spirit and Opportunity weigh about 180 kg each, 17 times more than me!' } },
     { k: 'why', title: { ar: 'ليه سكتّ؟', en: 'Why did I go silent?' }, body: { ar: 'أنا ما كنتش بكلم الأرض مباشرة، كنت بكلم المحطة Pathfinder وهي توصّل كلامي. لما Pathfinder بعتت آخر إشارة يوم ٢٧ سبتمبر ١٩٩٧، فضلت أنا لوحدي من غير صوت.', en: 'I didn’t talk to Earth directly — the Pathfinder lander relayed my messages. When Pathfinder sent its last signal on 27 Sep 1997, I was left without a voice.' } },
+    { k: 'legacy', legacy: 0, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'طريقة الهبوط بأكياس الهوا والمحطة اللي بتفتح زي الوردة اتستخدموا تاني عشان ينزّلوا Spirit وOpportunity. وأثبتت إن روفر صغير يقدر يلف حوالين الصخور لوحده، وتصميم العجل الست بتاعي بقى الأساس لكل روفرات ناسا اللي جت بعدي.', en: 'My airbag landing and my flower-like opening lander were used again to land Spirit and Opportunity. I proved a small rover can steer around rocks by itself, and my six-wheel design became the base for every NASA Mars rover after me.' } },
   ],
   spirit: [
     { k: 'photo', title: { ar: 'النقطة دي… إحنا', en: 'That dot is us' }, body: { ar: 'يوم ٨ مارس ٢٠٠٤، قبل شروق الشمس بساعة، Spirit صوّر النقطة المنورة دي. دي الأرض! أول صورة للأرض اتاخدت من سطح كوكب أبعد من القمر. كل الناس اللي تعرفهم موجودين جوه النقطة دي.', en: 'On 8 March 2004, one hour before sunrise, Spirit photographed this bright dot. That’s Earth! The first image of Earth ever taken from the surface of a planet beyond the Moon. Everyone you know is inside that dot.' }, img: 'assets/PIA05547.jpg', w: 1194, h: 1007, credit: 'NASA/JPL/Cornell/Texas A&M · PIA05547' },
+    { k: 'silica', title: { ar: 'اكتشاف من عجلة بايظة', en: 'A discovery from a broken wheel' }, body: { ar: 'سنة ٢٠٠٦ عجلة من عجلاتي وقفت، فبقيت أسحبها ورايا. العجلة دي حفرت في الأرض وطلّعت تربة بيضا طلعت سيليكا شبه نقية، جنب مكان اسمه Home Plate. السيليكا دي بتتكوّن حوالين ينابيع مية سخنة أو فتحات بخار، وأماكن زي دي على الأرض مليانة حياة.', en: 'In 2006 one of my wheels stopped, so I dragged it behind me. That wheel dug up white soil that turned out to be almost pure silica, near a place called Home Plate. Silica like this forms around hot springs or steam vents — places that are full of life on Earth.' } },
+    { k: 'legacy', legacy: 1, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'اكتشاف الينابيع السخنة غيّر السؤال: مش بس «كان فيه مية؟»… لأ، «هل المريخ كان ممكن يعيش فيه كائنات؟». وده بالظبط السؤال اللي Curiosity اتبعت عشانه.', en: 'Finding signs of hot springs changed the question from “was there water?” to “could Mars once have supported life?” — exactly the question Curiosity was sent to answer.' } },
   ],
-  opportunity: [],
+  opportunity: [
+    { k: 'hole', title: { ar: 'هدف من أول لمسة', en: 'A hole-in-one landing' }, body: { ar: 'أكياس الهوا بتاعتي نطّت ودحرجتني جوه فوهة صغيرة اسمها Eagle. ولما فتحت كاميراتي لقيت حرفها كله صخور طبقات مكشوفة قدامي على طول! المهندسين سمّوها «hole-in-one» زي الجولف.', en: 'My airbags bounced and rolled me into a small crater called Eagle. When I opened my cameras, its rim was lined with exposed layered bedrock right in front of me! The engineers called it a “hole-in-one”, like in golf.' } },
+    { k: 'berries', title: { ar: 'التوت الأزرق اللي مش توت', en: 'Blueberries that aren’t berries' }, body: { ar: 'لقيت كور صغيرة قد حبة الخرز مالية الأرض، العلماء سمّوها «توت أزرق». طلعت معدن اسمه الهيماتيت، واتكوّنت في مية حمضية زمان. دي كانت من أهم الأدلة إن المكان ده كان غرقان مية في الماضي.', en: 'I found tiny balls, the size of beads, all over the ground. Scientists nicknamed them “blueberries”. They are made of a mineral called hematite that formed in acidic water long ago — one of the strongest clues that this place was once soaked in water.' } },
+    { k: 'gypsum', title: { ar: 'خط أبيض… دليل قوي', en: 'A white line, a strong clue' }, body: { ar: 'سنة ٢٠٠٥ لقيت صخرة طلعت نيزك من حديد ونيكل جنب درع الحرارة بتاعي. وبعد رحلة ٣ سنين لفوهة Endeavour (عرضها حوالي ٢٢ كم)، لقيت عروق بيضا من معدن الجبس، اتكوّنت من مية جرت في شقوق تحت الأرض. فريقي قال إنه أقوى دليل على المية شافوه معايا.', en: 'In 2005 I found a rock near my heat shield that turned out to be an iron-nickel meteorite. After a 3-year drive to Endeavour Crater (about 22 km wide), I found bright veins of gypsum, left by water flowing through underground cracks. My team called it the strongest evidence for water they had seen with me.' } },
+    { k: 'legacy', legacy: 2, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'مشيت ٤٥٫١٦ كم، وده كان رقم قياسي لأي عربية سواقة على عالم تاني. واكتشافاتي أنا وSpirit عن المية كانت جزء من سبب إن ناسا وافقت تبعت Curiosity عشان تشوف: هل مكونات الحياة كانت موجودة على المريخ؟', en: 'I drove 45.16 km — a record for driving on another world. What Spirit and I found about water is part of why NASA approved Curiosity, to check whether the ingredients for life were once on Mars.' } },
+  ],
 };
+
+// "From footprint to footprint": what each mission found, and what it passed on to the next one.
+// Every line here is checked against the sources listed under SOURCES.
+export const LEGACY = [
+  { id: 'sojourner', name: 'Sojourner', year: 1997, ended: true,
+    found: { ar: 'أول روفر على كوكب تاني. نزلت بأكياس هوا، ولفّت حوالين الصخور لوحدها، وحلّلت صخور شبه البركانية اللي عندنا.', en: 'The first rover on another planet. It landed with airbags, steered around rocks by itself, and analysed rocks that look like Earth’s volcanic rocks.' },
+    gave: { ar: 'طريقة الهبوط بأكياس الهوا اتستخدمت تاني مع Spirit وOpportunity، وتصميم العجل الست بقى أساس كل روفر بعدها.', en: 'Its airbag landing was used again for Spirit and Opportunity, and its six-wheel design became the base for every rover after it.' } },
+  { id: 'spirit', name: 'Spirit', year: 2004, ended: true,
+    found: { ar: 'عجلته البايظة حفرت ولقت سيليكا شبه نقية، علامة على ينابيع مية سخنة زمان.', en: 'Its broken wheel dug up almost pure silica, a sign of ancient hot springs.' },
+    gave: { ar: 'السؤال كبر: مش بس «كان فيه مية؟» لكن «هل المريخ كان ممكن يعيش فيه كائنات؟».', en: 'The question grew: not just “was there water?” but “could Mars have supported life?”' } },
+  { id: 'opportunity', name: 'Opportunity', year: 2004, ended: true,
+    found: { ar: 'لقى «التوت الأزرق» من الهيماتيت وعروق الجبس، أدلة قوية إن المية جرت زمان. ومشي رقم قياسي: ٤٥٫١٦ كم.', en: 'It found hematite “blueberries” and gypsum veins — strong proof that water once flowed — and drove a record 45.16 km.' },
+    gave: { ar: 'اكتشافات Spirit وOpportunity كانت جزء من سبب إن ناسا وافقت تبني Curiosity.', en: 'What Spirit and Opportunity found is part of why NASA approved building Curiosity.' } },
+  { id: 'curiosity', name: 'Curiosity', year: 2012, ended: false,
+    found: { ar: 'اتبعت تسأل: هل مكونات الحياة كانت موجودة؟ وبعد ما نزلت بشوية لقت إنها كانت موجودة، وإن فوهة Gale كان فيها بحيرة زمان.', en: 'Sent to ask: were the ingredients for life there? Soon after landing it found they were — and that Gale Crater once held a lake.' },
+    gave: { ar: 'بما إن المريخ كان صالح للحياة، الخطوة الجاية: ندوّر على علامات الحياة نفسها.', en: 'Since Mars was once habitable, the next step was to look for signs of life itself.' } },
+  { id: 'perseverance', name: 'Perseverance', year: 2021, ended: false,
+    found: { ar: 'بيدوّر على علامات حياة قديمة في فوهة Jezero، وبيجمع عينات صخور ممكن ترجع الأرض في المستقبل. وسنة ٢٠٢٥ ناسا قالت إن عينة منهم فيها «علامة حيوية محتملة» لسه محتاجة دراسة.', en: 'It searches Jezero Crater for signs of ancient life and collects rock samples that could come back to Earth. In 2025 NASA said one sample holds a “potential biosignature” that still needs study.' },
+    gave: { ar: 'العينات دي ممكن تجاوب يوم من الأيام على أكبر سؤال: هل كان فيه حياة على المريخ؟', en: 'One day these samples could help answer the biggest question: was there ever life on Mars?' } },
+];
+
+// The final check: what did the student learn? (one question per rover, then the legacy)
+export const FINAL_QUIZ = [
+  { s: { ar: 'إيه أهم حاجة Sojourner أثبتتها للروفرات اللي بعدها؟', en: 'What was the most important thing Sojourner proved for later rovers?' },
+    options: [
+      { t: { ar: 'إن روفر صغير ينفع ينزل بأكياس هوا ويلف حوالين الصخور لوحده', en: 'A small rover can land with airbags and steer around rocks by itself' }, ok: true },
+      { t: { ar: 'إن الروفرات تقدر تطير فوق المريخ', en: 'Rovers can fly over Mars' } },
+      { t: { ar: 'إن المريخ فيه محيطات النهارده', en: 'Mars has oceans today' } },
+    ],
+    why: { ar: 'Sojourner كانت تجربة تقنية، ونجاحها خلّى ناسا تستخدم نفس طريقة الهبوط ونفس فكرة العجل الست تاني.', en: 'Sojourner was a technology test. Its success let NASA reuse the same landing method and six-wheel idea.' } },
+  { s: { ar: 'عجلة Spirit البايظة كشفت عن إيه؟', en: 'What did Spirit’s broken wheel uncover?' },
+    options: [
+      { t: { ar: 'تلج تحت الرمل', en: 'Ice under the sand' } },
+      { t: { ar: 'سيليكا شبه نقية، علامة على ينابيع مية سخنة زمان', en: 'Almost pure silica — a sign of ancient hot springs' }, ok: true },
+      { t: { ar: 'حفرية لكائن حي', en: 'A fossil of a living thing' } },
+    ],
+    why: { ar: 'السيليكا دي بتتكوّن حوالين الينابيع السخنة وفتحات البخار، وأماكن زي دي على الأرض بيعيش فيها كائنات.', en: 'This silica forms around hot springs and steam vents — on Earth, places like these are home to life.' } },
+  { s: { ar: '«التوت الأزرق» اللي Opportunity لقاه اتكوّن إزاي؟', en: 'How did the “blueberries” Opportunity found form?' },
+    options: [
+      { t: { ar: 'نزلوا مع المطر من السما', en: 'They fell from the sky as rain' } },
+      { t: { ar: 'دي فاكهة حقيقية', en: 'They are real fruit' } },
+      { t: { ar: 'اتكوّنوا في مية زمان', en: 'They formed in water long ago' }, ok: true },
+    ],
+    why: { ar: 'الكور الصغيرة دي من معدن الهيماتيت، واتكوّنت في مية حمضية، فبقت دليل إن المكان كان غرقان مية.', en: 'These small balls are made of hematite that formed in acidic water — proof that the area was once soaked.' } },
+  { s: { ar: 'إزاي Spirit وOpportunity ساعدوا Curiosity؟', en: 'How did Spirit and Opportunity help Curiosity?' },
+    options: [
+      { t: { ar: 'اكتشافاتهم عن المية خلّت ناسا تبعت Curiosity تدوّر على مكونات الحياة', en: 'Their water discoveries led NASA to send Curiosity to look for the ingredients of life' }, ok: true },
+      { t: { ar: 'سلّموها قطع غيار', en: 'They handed it spare parts' } },
+      { t: { ar: 'ما ساعدوهاش، كل مهمة لوحدها', en: 'They didn’t — every mission is on its own' } },
+    ],
+    why: { ar: 'كل مهمة بتبني على اللي قبلها: الأول دوّرنا على المية، بعدين على الظروف المناسبة للحياة، ودلوقتي على علامات الحياة نفسها.', en: 'Each mission builds on the last: first we looked for water, then for conditions for life, and now for signs of life itself.' } },
+  { s: { ar: 'Perseverance بيعمل إيه ماحدش من الروفرات اللي قبله عمله؟', en: 'What is Perseverance doing that no rover before it did?' },
+    options: [
+      { t: { ar: 'بيدوّر على المية لأول مرة', en: 'Looking for water for the first time' } },
+      { t: { ar: 'بيجمع عينات صخور ممكن ترجع الأرض', en: 'Collecting rock samples that could come back to Earth' }, ok: true },
+      { t: { ar: 'نزل بأكياس هوا', en: 'Landing with airbags' } },
+    ],
+    why: { ar: 'Perseverance بيحفظ عينات في أنابيب، ومهمة جاية ممكن ترجّعها الأرض عشان العلماء يدرسوها بأجهزة أقوى.', en: 'Perseverance seals samples in tubes so a future mission could bring them to Earth for study with stronger instruments.' } },
+];
 
 // side by side (NASA sources in SOURCES)
 export const COMPARE = {
@@ -134,5 +202,18 @@ export const SOURCES = [
   ['Spaceflight Now — Giant airbags will give rovers’ landings a bounce (entry 5.4 km/s, parachute, 20 m bridle, airbags 8 s before touchdown)', 'https://spaceflightnow.com/mars/mera/031231landing.html'],
   ['Windows to the Universe (UCAR) — MER mission events timeline (launch dates, parachute, retro-rockets)', 'https://windows2universe.org/space_missions/mars/mars_exploration_rover/mission_events.html&edu=high'],
   ['NASA Earth Observatory — Blue Marble: Next Generation, Reto Stöckli (Earth in the expedition)', 'https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/'],
+  ['NASA — 10 years later: Pathfinder and Sojourner (550 rover images)', 'https://www.nasa.gov/image-article/pathfinder-sojourner-10-years-later/'],
+  ['JPL — Mars Pathfinder / Sojourner (airbag and petal landing reused for later rovers)', 'https://www.jpl.nasa.gov/missions/mars-pathfinder-sojourner-rover/'],
+  ['IEEE Spectrum — Sojourner: autonomous hazard avoidance and the six-wheel rocker-bogie design', 'https://spectrum.ieee.org/mars-pathfinder-rover'],
+  ['JPL — Spirit faces circuitous route (silica near Home Plate: hot springs or steam vents)', 'https://www.jpl.nasa.gov/news/nasas-mars-rover-spirit-faces-circuitous-route/'],
+  ['ASU — Foot-dragging rover finds hot-spring deposits (nearly pure silica)', 'https://news.asu.edu/content/mars-rover-finds-yellowstone-hot-spring-deposits'],
+  ['NASA — 20 Years After Landing (blueberries of hematite formed in acidic water)', 'https://www.nasa.gov/missions/mer/20-years-after-landing-how-nasas-twin-rovers-changed-mars-science/'],
+  ['JPL — Opportunity: NASA Rover Completes Mars Mission (hole-in-one, driving record)', 'https://www.jpl.nasa.gov/videos/opportunity-nasa-rover-completes-mars-mission/'],
+  ['JPL — Paydirt at Endeavour Crater (gypsum veins, strongest evidence for water)', 'https://www.jpl.nasa.gov/news/paydirt-at-8-year-old-mars-rovers-new-landing-site/'],
+  ['NASA Science — Opportunity in depth (Heat Shield Rock iron-nickel meteorite)', 'https://science.nasa.gov/mission/mer-opportunity/'],
+  ['The Planetary Society — Curiosity found Gale Crater once held a lake', 'https://www.planetary.org/space-missions/curiosity'],
+  ['NASA Science — Perseverance science: looking for signs of past life', 'https://science.nasa.gov/mission/mars-2020-perseverance/science/'],
+  ['NASA Science — Mars Sample Return', 'https://science.nasa.gov/mission/mars-sample-return/'],
+  ['NASA — Mars rover discovered a potential biosignature (2025)', 'https://www.nasa.gov/news-release/nasa-says-mars-rover-discovered-potential-biosignature-last-year/'],
   ['Solar System Scope — Mars & Milky Way textures (CC BY 4.0)', 'https://www.solarsystemscope.com/textures/'],
 ];

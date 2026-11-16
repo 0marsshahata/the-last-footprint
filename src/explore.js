@@ -10,7 +10,7 @@ const num = (n, L) => (L === 'ar' ? Number(n).toLocaleString('ar-EG') : Number(n
 function reveal(el) { el.hidden = false; void el.offsetWidth; el.classList.add('open'); }
 function conceal(el, ms) { el.classList.remove('open'); setTimeout(() => { if (!el.classList.contains('open')) el.hidden = true; }, ms); }
 
-export function createExplore({ getLang, onBadge, audio, onClose }) {
+export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
   const sheet = $('#explore'), body = $('#explore-body'), title = $('#explore-title');
   const game = $('#game'), gameBody = $('#game-body');
   const about = $('#about'), aboutBody = $('#about-body');
@@ -44,10 +44,11 @@ export function createExplore({ getLang, onBadge, audio, onClose }) {
 
   function cardsHTML(id, L) {
     return (CARDS[id] || []).map((c) => `
-      <section class="ex-sec card" id="card-${c.k}">
+      <section class="ex-sec card ${c.legacy != null ? 'legacy' : ''}" id="card-${c.k}">
         <h3>${esc(c.title[L])}</h3>
         ${c.img ? `<figure><img src="${c.img}" width="${c.w}" height="${c.h}" alt="${esc(T('photoAlt', L))}" loading="lazy" decoding="async"><figcaption>${esc(c.credit)}</figcaption></figure>` : ''}
         <p>${esc(c.body[L])}</p>
+        ${c.legacy != null ? `<button type="button" class="primary" data-act="legacy" data-at="${c.legacy}">${T('seeChain', L)}</button>` : ''}
       </section>`).join('');
   }
 
@@ -90,6 +91,7 @@ export function createExplore({ getLang, onBadge, audio, onClose }) {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.act === 'game') openGame();
     if (b.dataset.act === 'compare') openCompare();
+    if (b.dataset.act === 'legacy') onLegacy?.(+b.dataset.at);
     if (b.dataset.act === 'photo') document.getElementById('card-photo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (b.dataset.ans != null) {
       const box = b.closest('.q'); const q = QUIZ[+box.dataset.q]; const L = getLang();
@@ -160,8 +162,8 @@ export function createExplore({ getLang, onBadge, audio, onClose }) {
     const L = getLang();
     const tabs = ['project', 'teacher', 'sources', 'ai'];
     const content = {
-      project: `<p>${T('aboutP1', L)}</p><p>${T('aboutP2', L)}</p><ul>${['aboutL1', 'aboutL5', 'aboutL2', 'aboutL3', 'aboutL4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul><p class="team">${T('teamLine', L)}</p>`,
-      teacher: `<p>${T('teachP1', L)}</p><ol>${['teach1', 'teach2', 'teach3', 'teach4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ol><p>${T('teachQ', L)}</p><ul>${['teachQ1', 'teachQ2', 'teachQ3'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul>`,
+      project: `<p>${T('aboutP1', L)}</p><p>${T('aboutP2', L)}</p><ul>${['aboutL1', 'aboutL5', 'aboutL6', 'aboutL2', 'aboutL3', 'aboutL4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul><p class="team">${T('teamLine', L)}</p>`,
+      teacher: `<p>${T('teachP1', L)}</p><ol>${['teach1', 'teach2', 'teach3', 'teach4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ol><p>${T('teachQ', L)}</p><ul>${['teachQ1', 'teachQ2', 'teachQ3', 'teachQ4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul>`,
       sources: `<ul class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')}</ul><p class="small">${T('factNote', L)}</p>`,
       ai: `<p>${T('aiP1', L)}</p><ul>${['ai1', 'ai2', 'ai3', 'ai4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul>`,
     };
@@ -185,6 +187,7 @@ export function createExplore({ getLang, onBadge, audio, onClose }) {
 
   window.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
+    if (document.querySelector('#legacy:not([hidden]), #fquiz:not([hidden])')) return; // those close first
     if (!game.hidden) closeGame(); else if (!cmp.hidden) closeCompare(); else if (!about.hidden) closeAbout(); else if (!sheet.hidden) close();
   });
 

@@ -3,9 +3,9 @@
 // Voices and the Earth texture are kept the first time they are downloaded.
 // Second visit: everything opens from the device, with or without internet.
 // A new version of the site gets a new cache name, and the old cache is deleted.
-const VERSION = '2a75d1c62e7b';
+const VERSION = '16bb878aa39d';
 const CACHE = 'tlf-' + VERSION;
-const CORE = ["./", "index.html", "app.js?v=2a75d1c62e7b", "models/space-tex.js?v=2a75d1c62e7b", "models/MER.glb", "fonts/chakra-petch-latin-500-normal.woff2", "fonts/chakra-petch-latin-600-normal.woff2", "fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2", "fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2", "fonts/ibm-plex-sans-arabic-latin-400-normal.woff2", "fonts/ibm-plex-sans-arabic-latin-600-normal.woff2", "fonts/lalezar-arabic-400-normal.woff2", "assets/PIA00405.jpg", "assets/PIA00407.jpg", "assets/PIA00971.jpg", "assets/PIA05547.jpg", "assets/PIA12205.jpg", "assets/PIA21906.jpg", "assets/PIA22908.jpg"];
+const CORE = ["./", "index.html", "app.js?v=16bb878aa39d", "models/space-tex.js?v=16bb878aa39d", "models/MER.glb", "fonts/chakra-petch-latin-500-normal.woff2", "fonts/chakra-petch-latin-600-normal.woff2", "fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2", "fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2", "fonts/ibm-plex-sans-arabic-latin-400-normal.woff2", "fonts/ibm-plex-sans-arabic-latin-600-normal.woff2", "fonts/lalezar-arabic-400-normal.woff2", "assets/PIA00405.jpg", "assets/PIA00407.jpg", "assets/PIA00971.jpg", "assets/PIA05547.jpg", "assets/PIA12205.jpg", "assets/PIA21906.jpg", "assets/PIA22908.jpg"];
 
 self.addEventListener('install', (e) => {
   // each file on its own, so one missing file never blocks the rest

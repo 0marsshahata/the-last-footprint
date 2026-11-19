@@ -669,6 +669,7 @@ function update(dt, time) {
   if (stepTyping(typing, dt, rid === 'sojourner' ? 1.25 : rid === 'opportunity' ? 0.85 : 1)) ui.text.textContent = typing.full.slice(0, typing.shown);
 }
 
+const adaptQ = { hitches: 0, high: 0, ups: 0, pr0: S.pr };
 function adapt(dt) {
   frames++; acc += dt;
   if (acc >= 1) {
@@ -677,7 +678,15 @@ function adapt(dt) {
       const info = renderer.info.render;
       $('#fps').textContent = `${S.fps} fps · pr ${S.pr.toFixed(2)} · ${info.calls} calls · ${(info.triangles / 1000).toFixed(0)}k tris · stalls ${hitch.n} (max ${Math.round(hitch.worst * 1000)} ms)`;
     }
-    if (S.stage !== 'loading' && S.stage !== 'signal' && S.fps < 52 && !document.hidden) lowStreak++; else lowStreak = 0;
+    // a second with a one-off stall (another app, the browser itself) is not the scene being too heavy
+    const stalled = hitch.n !== adaptQ.hitches; adaptQ.hitches = hitch.n;
+    if (S.stage !== 'loading' && S.stage !== 'signal' && S.fps < 52 && !document.hidden && !stalled) lowStreak++; else lowStreak = 0;
+    // and when the device is fast again, the sharpness comes back (at most twice, so it never see-saws)
+    if (S.fps >= 58 && !document.hidden) adaptQ.high++; else adaptQ.high = 0;
+    if (adaptQ.high >= 6 && S.pr < adaptQ.pr0 && adaptQ.ups < 2) {
+      S.pr = Math.min(adaptQ.pr0, S.pr + 0.25); renderer.setPixelRatio(S.pr); composer.setPixelRatio(S.pr); composer.setSize(innerWidth, innerHeight);
+      adaptQ.high = 0; adaptQ.ups++;
+    }
     if (lowStreak >= 2 && S.pr > 0.85) {
       S.pr = Math.max(0.85, S.pr - 0.25); renderer.setPixelRatio(S.pr); composer.setPixelRatio(S.pr); composer.setSize(innerWidth, innerHeight); lowStreak = 0;
       if (S.pr <= 1 && bloom.enabled && S.fps < 35) bloom.enabled = false;

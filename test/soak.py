@@ -16,7 +16,7 @@ async def main():
         print("start", await pg.evaluate(mem))
         sites=['sojourner','spirit','opportunity']
         for i in range(10):
-            await pg.click("#go-warp")
+            await pg.evaluate("document.body.classList.contains('atlas-on') && document.querySelector('#atlas .atlas-card.ready').click()"); await pg.wait_for_timeout(400); await pg.click("#go-warp")
             await pg.wait_for_function("__tlf.S.stage==='pick'", timeout=60000, polling=30)
             await pg.click(f"#guide-chips button[data-site='{sites[i%3]}']")
             await pg.click("#guide-land")

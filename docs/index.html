@@ -259,6 +259,13 @@ html[dir=rtl] #explore{--dx:-22px}
 html[dir=rtl] #explore-title{text-align:end}
 #explore-body{flex:1;overflow-y:auto;padding:4px 18px 20px;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,226,204,.25) transparent}
 body.sheet-open #bubble,body.sheet-open #nav,body.sheet-open #power-wrap,body.sheet-open #credit{opacity:0!important;visibility:hidden!important}
+.ex-tabs{position:sticky;top:-4px;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 -18px;padding:10px 14px;background:rgba(22,12,9,.92);border-bottom:1px solid var(--line)}
+.ex-tabs [role=tab]{min-height:40px;padding:0 6px;border-radius:12px;font-size:13.5px;font-weight:600;color:var(--ink-3);transition:background .15s,color .15s}
+@media (hover:hover) and (pointer:fine){.ex-tabs [role=tab]:hover{color:var(--ink);background:rgba(255,255,255,.06)}}
+.ex-tabs [role=tab][aria-selected=true]{color:#24150f;background:var(--amber)}
+.fig-wrap{position:relative}
+.mini.say{display:inline-flex;align-items:center;gap:6px;margin:2px 0 4px}
+.pin{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;border:2px solid #7fe6ff;box-shadow:0 0 0 2px rgba(0,0,0,.55),0 0 14px rgba(127,230,255,.7)}
 .ex-sec{padding:18px 0;border-bottom:1px solid var(--line)}
 .ex-sec:last-child{border-bottom:0}
 .ex-sec h3{font-size:16.5px;font-weight:600;margin-bottom:10px;color:#ffe2c8}
@@ -397,6 +404,128 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
 #bubble-next:active{transform:scale(.96)}
 #bubble-text{font-size:clamp(16px,2vw,19px);line-height:1.75;min-height:3.5em;cursor:pointer;text-wrap:pretty}
 
+/* ---------- Ghost Hardware Atlas ---------- */
+.atlas{display:none;flex-direction:column;gap:10px}
+body.atlas-on .atlas{display:flex}
+body.atlas-on .portals,body.atlas-on .atlas-back{display:none}
+.atlas-back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink-2)}
+html[dir=rtl] .atlas-back svg{transform:scaleX(-1)}
+.atlas-head{display:flex;flex-direction:column;gap:2px}
+.atlas-lead{font-size:15px;color:var(--ink-2)}
+.atlas-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.atlas-card{position:relative;display:grid;grid-template-columns:64px 1fr;align-items:center;gap:12px;padding:12px;border-radius:20px;text-align:start;background:rgba(20,11,8,.55);border:1px solid var(--line);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:transform .16s cubic-bezier(.23,1,.32,1),border-color .2s,background .2s}
+.atlas-card:active{transform:scale(.98)}
+@media (hover:hover) and (pointer:fine){.atlas-card:hover{border-color:rgba(255,255,255,.28);background:rgba(34,19,14,.62)}}
+.atlas-card.ready{grid-column:1/-1;grid-template-columns:96px 1fr auto;padding:14px 16px;border-color:rgba(127,230,255,.4);background:linear-gradient(180deg,rgba(40,70,82,.45),rgba(20,11,8,.55))}
+.ac-img{display:block;width:64px;height:64px;border-radius:50%;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 6px 20px rgba(0,0,0,.4)}
+.atlas-card.ready .ac-img{width:96px;height:96px;box-shadow:0 0 0 1px rgba(127,230,255,.3),0 0 30px rgba(255,140,80,.25)}
+.ac-img img{width:100%;height:100%;object-fit:cover;display:block}
+.atlas-card:not(.ready) .ac-img img{filter:saturate(.75) brightness(.85)}
+.ac-txt{display:flex;flex-direction:column;gap:3px;min-width:0}
+.ac-txt b{font-size:17px;font-weight:600}
+.atlas-card.ready .ac-txt b{font-size:20px}
+.ac-txt small{font-size:12.5px;color:var(--ink-3);line-height:1.45}
+.ac-tag{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;justify-self:start;color:var(--ink-3);border:1px solid var(--line)}
+.atlas-card:not(.ready) .ac-tag{position:absolute;top:8px;inset-inline-end:8px;font-size:10.5px;padding:2px 8px}
+.atlas-card.ready .ac-tag{font-size:14px;padding:9px 18px;color:#0c1418;background:linear-gradient(180deg,#bff4ff,#6fd9f5);border:0;box-shadow:0 8px 24px rgba(111,217,245,.3)}
+.atlas-credit{font-size:10.5px;color:var(--ink-3);display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.atlas-hero{display:grid;grid-template-columns:72px 1fr;gap:12px;align-items:center;margin-bottom:12px}
+.atlas-hero img{width:72px;height:72px;border-radius:50%;object-fit:cover}
+.atlas-intro{font-size:14px;line-height:1.7;color:var(--ink-2)}
+.atlas-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.atlas-list li{padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.atlas-list li.hl{border-color:rgba(127,230,255,.5);background:rgba(127,230,255,.07)}
+.ag-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.ag-head b{font-size:15px}
+.ag-year{font-size:12px;color:var(--ink-3)}
+.soon{margin-inline-start:auto;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;color:#ffe2c8;border:1px solid rgba(255,179,107,.45)}
+.atlas-list p{font-size:13.5px;line-height:1.7;color:var(--ink-2)}
+.atlas-list .src-line{margin-top:6px}
+.ghost-row{display:flex;flex-direction:column;gap:6px;margin-top:10px;font-size:12px;color:var(--ink-3)}
+#ghost-chips{display:flex;flex-wrap:wrap;gap:6px}
+@media (max-width:600px){#ghost-chips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-4px;padding:0 4px 2px}#ghost-chips::-webkit-scrollbar{display:none}#ghost-chips button{flex:none}}
+#ghost-chips button{min-height:30px;padding:0 10px;border-radius:999px;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.22)}
+@media (hover:hover) and (pointer:fine){#ghost-chips button:hover{color:var(--ink);border-color:rgba(255,255,255,.4)}}
+@media (max-width:760px){
+  .atlas-cards{gap:8px}
+  .atlas-card{grid-template-columns:48px 1fr;padding:10px;gap:10px}
+  .ac-img{width:48px;height:48px}
+  .atlas-card.ready{grid-template-columns:64px 1fr;}
+  .atlas-card.ready .ac-img{width:64px;height:64px}
+  .atlas-card.ready .ac-tag{grid-column:1/-1;justify-self:stretch;text-align:center}
+  .ac-txt b{font-size:15px}
+  .atlas-card.ready .ac-txt b{font-size:18px}
+}
+
+/* ---------- clearer hall: next step, labels, one panel at a time ---------- */
+#hint b{color:#bff4ff;font-weight:700;margin-inline-end:4px}
+body.bubble-on:not(.stats-open) #hint{opacity:0!important}
+#bubble-step{margin-top:8px;padding-top:9px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-2)}
+#bubble-step b{color:#bff4ff;font-weight:700;margin-inline-end:4px}
+#j-count{min-width:0;white-space:nowrap;direction:inherit}
+#j-count .jn{color:var(--ink-2);font-family:var(--body);font-size:12.5px}
+.cb-l{display:none}
+@media (min-width:1100px){
+  .cb-l{display:inline;font-size:13px;font-weight:600}
+  #mute{width:auto;padding:0 14px}
+}
+#nav button .ok{position:absolute;top:-5px;inset-inline-end:-3px;width:17px;height:17px;border:2px solid rgba(20,11,8,.9);border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;color:#062028;background:var(--cyan);box-shadow:0 0 8px rgba(127,230,255,.6)}
+#nav button.awake::after{display:none}
+#stats-btn{display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;background:rgba(255,255,255,.08);border:1px solid var(--line)}
+#stats-btn svg{width:15px;height:15px;transition:transform .2s cubic-bezier(.23,1,.32,1)}
+#stats-btn[aria-expanded=true] svg{transform:rotate(180deg)}
+body.stats-open #bubble{opacity:0!important;visibility:hidden!important}
+.stepper{display:flex;gap:6px;list-style:none;margin:0;padding:0;counter-reset:st}
+.stepper li{flex:1;display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink-3);counter-increment:st}
+.stepper li::before{content:counter(st);flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;border:1px solid var(--line)}
+html[lang=ar] .stepper li::before{content:counter(st,arabic-indic)}
+.stepper li.now{color:#ffe2c8}
+.stepper li.now::before{background:var(--amber);border-color:var(--amber);color:#24150f}
+.stepper li.done{color:#bff4ff}
+.stepper li.done::before,html[lang=ar] .stepper li.done::before{content:"✓";background:rgba(127,230,255,.2);border-color:var(--cyan)}
+
+/* ---------- before we start ---------- */
+.pre-p{font-size:15px;line-height:1.75;color:var(--ink-2);margin-bottom:14px}
+.consent{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.c-check{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.65;color:var(--ink);cursor:pointer}
+.c-check input{flex:none;width:22px;height:22px;margin-top:2px;accent-color:#7fe6ff}
+.ages{border:0;margin:12px 0 0;padding:0}
+.ages legend{font-size:13.5px;font-weight:600;color:#ffe2c8;margin-bottom:8px}
+.age-row{display:flex;flex-wrap:wrap;gap:6px}
+.age{position:relative}
+.age input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.age span{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;background:rgba(255,255,255,.07);border:1px solid var(--line);transition:background .15s,border-color .15s}
+.age input:checked+span{background:rgba(127,230,255,.22);border-color:var(--cyan);color:#e9fbff}
+.age input:focus-visible+span{outline:2px solid #fff;outline-offset:2px}
+.pre-err{min-height:1.2em;margin-top:8px;font-size:13px;color:#ffb39e}
+.pre-acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.pre-acts .primary{flex:1}
+#pre .small{margin-top:12px;font-size:12.5px;color:var(--ink-3)}
+.fq-cmp{margin-top:12px;padding:10px 14px 12px;border-radius:14px;background:rgba(127,230,255,.08);border:1px solid rgba(127,230,255,.28);text-align:center}
+.fq-cmp .cap{display:block;font-size:12.5px;color:var(--ink-3);margin-bottom:6px}
+.fq-cmp .row{display:flex;align-items:center;justify-content:center;gap:14px}
+.fq-cmp .col{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12.5px;color:var(--ink-2)}
+.fq-cmp .col b{font-family:var(--display);font-size:24px;line-height:1.1;color:var(--ink)}
+.fq-cmp .col.after b{color:#7fe6ff}
+.fq-cmp .arr{font-size:18px;color:var(--ink-3)}
+
+/* ---------- fact sources ---------- */
+.src-btn{display:inline-flex;align-items:center;gap:4px;min-height:24px;padding:0 9px;border-radius:999px;font-size:11.5px;font-weight:600;color:#bff4ff;background:rgba(127,230,255,.1);border:1px solid rgba(127,230,255,.38);transition:background .15s,transform .12s var(--ease)}
+.src-btn::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.75}
+@media (hover:hover) and (pointer:fine){.src-btn:hover{background:rgba(127,230,255,.2)}}
+.src-btn:active{transform:scale(.97)}
+.src-btn[aria-expanded="true"]{background:rgba(127,230,255,.24)}
+#bubble-src:empty{display:none}
+.src-line{margin-top:10px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-3)}
+.src-line .pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:999px;color:#bff4ff;border:1px solid rgba(127,230,255,.45)}
+#srcpop{position:fixed;z-index:50;padding:12px 14px 14px;border-radius:16px;background:rgba(14,10,9,.94);box-shadow:0 18px 50px rgba(0,0,0,.5);animation:srcIn .16s cubic-bezier(.23,1,.32,1)}
+@keyframes srcIn{from{opacity:0;transform:translateY(4px) scale(.97)}}
+@media (prefers-reduced-motion:reduce){#srcpop{animation:none}}
+.srcpop-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.srcpop-head h3{font-size:14px;font-weight:600}
+#srcpop ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+#srcpop a{display:block;font-size:13px;line-height:1.5;color:#bff4ff;text-decoration:underline;text-underline-offset:3px;direction:ltr;text-align:start}
+
 /* ---------- power pulse ---------- */
 #power-wrap{bottom:calc(92px + var(--safe-b));left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:12px;pointer-events:none}
 #hint{font-size:13.5px;color:var(--ink);text-align:center;max-width:min(440px,86vw);padding:7px 14px;border-radius:999px;background:rgba(20,11,8,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);opacity:0;transition:opacity .5s}
@@ -525,9 +654,9 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
 .lg-card.you p{font-size:15.5px;line-height:1.8;color:var(--ink-2);text-wrap:pretty}
 .lg-you{width:54px;height:70px;color:#bff4ff;filter:drop-shadow(0 0 16px rgba(127,230,255,.7))}
 .lg-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
-#legacy button.primary,#fquiz button.primary,.card.legacy button.primary{height:44px;padding:0 22px;border-radius:999px;font-weight:600;color:#0c1418;background:linear-gradient(180deg,#bff4ff,#6fd9f5);border:0;box-shadow:0 8px 30px rgba(111,217,245,.3);transition:transform .16s var(--ease)}
-#legacy button.primary:active,#fquiz button.primary:active{transform:scale(.97)}
-#legacy button.ghost,#fquiz button.ghost{height:44px;padding:0 18px;border-radius:999px;font-weight:600;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+#legacy button.primary,#fquiz button.primary,#pre button.primary,.card.legacy button.primary{height:44px;padding:0 22px;border-radius:999px;font-weight:600;color:#0c1418;background:linear-gradient(180deg,#bff4ff,#6fd9f5);border:0;box-shadow:0 8px 30px rgba(111,217,245,.3);transition:transform .16s var(--ease)}
+#legacy button.primary:active,#fquiz button.primary:active,#pre button.primary:active{transform:scale(.97)}
+#legacy button.ghost,#fquiz button.ghost,#pre button.ghost{height:44px;padding:0 18px;border-radius:999px;font-weight:600;background:rgba(255,255,255,.06);border:1px solid var(--line)}
 #legacy button.ghost:disabled{opacity:.35;cursor:default}
 .card.legacy{background:linear-gradient(180deg,rgba(127,230,255,.05),transparent)}
 .card.legacy button.primary{margin-top:12px}
@@ -572,6 +701,12 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
         <span><span data-t="silentA">Spirit ساكت بقاله</span> <b id="c-days">0</b> <span data-t="silentB">يوم</span></span>
         <span id="c-clock" class="c-clock">00:00:00</span>
       </div>
+      <div id="atlas" class="atlas">
+        <p class="atlas-head"><span class="eyebrow-sm" data-t="atlasEyebrow">أطلس الأجهزة المنسية</span><span class="atlas-lead" data-t="atlasLead">اختار هتستكشف فين</span></p>
+        <div class="atlas-cards"></div>
+        <p class="atlas-credit"></p>
+      </div>
+      <button id="atlas-back" class="link-btn atlas-back" type="button"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span data-t="atlasBack">أطلس الأجهزة المنسية</span></button>
       <div class="portals">
         <article class="portal glass">
           <h2 data-t="expTitle">الرحلة الكاملة</h2>
@@ -611,6 +746,7 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
     <button type="button" data-site="spirit" aria-pressed="false"><b>Spirit</b><small>2004</small></button>
     <button type="button" data-site="opportunity" aria-pressed="false"><b>Opportunity</b><small>2004</small></button>
   </div>
+  <div id="ghost-row" class="ghost-row"><span data-t="ghostLabel">قريبًا على المريخ كمان:</span><div id="ghost-chips" translate="no"></div></div>
   <div class="g-actions">
     <button id="guide-land" type="button" hidden></button>
     <button id="guide-back" type="button" data-t="back">رجوع</button>
@@ -619,6 +755,7 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
 
 <section id="ending" class="glass" aria-live="polite">
   <div class="g-name"><span class="g-dot" aria-hidden="true"></span><b data-t="guideName">سول · المرشد</b></div>
+  <ol id="end-stepper" class="stepper" hidden data-t-aria="endStepsAria" aria-label="خطوات النهاية"><li data-t="es1">السلسلة</li><li data-t="es2">الاختبار</li><li data-t="es3">الشهادة</li></ol>
   <p id="end-text"></p>
   <div id="end-steps" class="end-steps" hidden><button id="end-legacy" class="end-btn" type="button"><svg viewBox="0 0 20 26" aria-hidden="true"><use href="#fp"/></svg><span data-t="legacyBtn">تابع الآثار</span></button><button id="end-skip" class="link-btn" type="button" data-t="skipToCert">روح للشهادة على طول</button></div>
   <form id="end-form" hidden autocomplete="off" novalidate>
@@ -649,15 +786,16 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
     <li><svg aria-hidden="true"><use href="#fp"/></svg><span class="sr-only"></span></li>
     <li><svg aria-hidden="true"><use href="#fp"/></svg><span class="sr-only"></span></li>
   </ol><span id="j-count" aria-hidden="true"></span></div>
-  <button id="home-btn" class="chip-btn glass hall-only" type="button" data-t-aria="homeAria" aria-label="الرجوع للبداية">
-    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 2.6 14.6 0 17M12 3.5c-2.6 2.4-2.6 14.6 0 17"/></svg>
+  <button id="home-btn" class="chip-btn glass hall-only" type="button" data-t-aria="homeAria" aria-label="رجوع للبداية">
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 2.6 14.6 0 17M12 3.5c-2.6 2.4-2.6 14.6 0 17"/></svg><span class="cb-l" data-t="tbHome">رجوع</span>
   </button>
   <button id="about-btn" class="chip-btn glass" type="button" aria-haspopup="dialog" data-t-aria="aboutAria" aria-label="عن المشروع والمصادر">
-    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.9" r="1.1" fill="currentColor" stroke="none"/></svg>
+    <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/><circle cx="12" cy="7.9" r="1.1" fill="currentColor" stroke="none"/></svg><span class="cb-l" data-t="tbAbout">عن المشروع</span>
   </button>
   <button id="lang" class="chip-btn glass" type="button" data-t="lang">English</button>
   <button id="mute" class="chip-btn glass" type="button" aria-pressed="false" data-t-aria="mute" aria-label="كتم الصوت">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor" stroke="none"/><path class="w" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="x" d="M16 9.5l5 5m0-5l-5 5"/></svg>
+  <span class="cb-l" data-t="tbSound">الصوت</span>
   </button>
 </div>
 
@@ -666,6 +804,7 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
   <div id="rover-meta"></div>
   <div class="tag-row">
     <div id="rover-status"></div>
+    <button id="stats-btn" type="button" hidden aria-expanded="false" aria-controls="stats"><span data-t="statsBtn">بياناتي</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
     <button id="explore-btn" type="button" hidden aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg><span data-t="exploreBtn">استكشف</span></button>
   </div>
   <div id="stats"></div>
@@ -680,8 +819,9 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
 </div>
 
 <section id="bubble" class="ui hall-ui glass" aria-live="polite">
-  <div class="bubble-head"><span id="bubble-kind" class="kind"></span><span id="bubble-count"></span><button id="bubble-next" type="button"></button></div>
+  <div class="bubble-head"><span id="bubble-kind" class="kind"></span><span id="bubble-src"></span><span id="bubble-count"></span><button id="bubble-next" type="button"></button></div>
   <p id="bubble-text"></p>
+  <p id="bubble-step" hidden></p>
   <button id="end-cta" type="button" hidden><svg viewBox="0 0 20 26" aria-hidden="true"><use href="#fp"/></svg><span data-t="endingCta">صحّيت التلاتة! كمّل للأثر الجاي</span><svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
 </section>
 
@@ -717,6 +857,14 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
   </div>
 </div>
 
+<div id="atlas-dlg" class="modal" hidden>
+  <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="atlas-title">
+    <header class="sheet-head"><div><span class="eyebrow-sm" id="atlas-eye"></span><h2 id="atlas-title"></h2></div><button class="close icon-btn" type="button" data-t-aria="close" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+    <div class="atlas-hero"><img src="" alt="" width="480" height="480"><p class="atlas-intro"></p></div>
+    <ul class="atlas-list"></ul>
+  </div>
+</div>
+
 <div id="legacy" class="modal" hidden>
   <div class="modal-card glass wide" role="dialog" aria-modal="true" aria-labelledby="legacy-title">
     <header class="sheet-head"><div><span class="eyebrow-sm" translate="no">1997 → 2021</span><h2 id="legacy-title" data-t="legacyTitle">من أثر لأثر</h2></div><button class="lg-close icon-btn" type="button" data-t-aria="close" aria-label="إغلاق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
@@ -744,7 +892,7 @@ html[dir=rtl] .brand{margin-right:0;margin-left:auto}
 <p id="credit" class="ui hall-ui" data-t="credit"></p>
 <div id="fps"></div>
 
-<script src="models/space-tex.js"></script>
-<script src="app.js"></script>
+<script src="models/space-tex.js?v=2a75d1c62e7b"></script>
+<script src="app.js?v=2a75d1c62e7b"></script>
 </body>
 </html>

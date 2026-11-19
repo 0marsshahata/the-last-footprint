@@ -65,7 +65,19 @@ export function buildGuide(renderer) {
   const flame = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: new THREE.Color(1.4, 0.9, 0.5), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
   flame.position.y = -0.42; flame.scale.set(0.22, 0.3, 1); body.add(flame);
 
-  root.traverse((o) => { o.frustumCulled = false; if (o.isMesh || o.isSprite) o.renderOrder = 30; });
+  // SOL always draws on top of the scene: he is drawn last, right after the depth buffer is cleared,
+  // so a planet the camera flies close to can never cut through him (he lives in camera space).
+  root.traverse((o) => {
+    o.frustumCulled = false;
+    if (!(o.isMesh || o.isSprite)) return;
+    o.renderOrder = 1000;
+    const mats = Array.isArray(o.material) ? o.material : [o.material];
+    mats.forEach((m) => { if (!m.transparent) { m.transparent = true; m.depthWrite = true; } });
+  });
+  const clearer = new THREE.Mesh(new THREE.PlaneGeometry(0.001, 0.001), new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, depthTest: false }));
+  clearer.renderOrder = 999; clearer.frustumCulled = false; clearer.position.z = -0.5;
+  clearer.onBeforeRender = (r) => r.clearDepth();
+  root.add(clearer);
 
   const st = { t: 0, blink: 2, talk: 0, wave: 0, show: 0, showTarget: 0, look: new THREE.Vector2(), side: 1 };
   const anchor = new THREE.Vector3();
@@ -77,11 +89,11 @@ export function buildGuide(renderer) {
     const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * D, halfW = halfH * camera.aspect;
     const upp = (2 * halfH) / innerHeight; // camera units per CSS pixel at depth D
     st.side = lang === 'ar' ? 1 : -1;
-    const s = portrait ? 0.6 : 0.78;
+    const s = portrait ? 0.46 : 0.78; // on phones SOL stays small, so he never covers the globe's labels
     root.scale.setScalar(s);
     if (portrait && avoid && avoid.height > 0) {
       const yPx = avoid.top - (0.62 * s) / upp; // robot centre a little above the bubble
-      anchor.set(st.side * (halfW - 0.48 * s), halfH - yPx * upp, -D);
+      anchor.set(st.side * (halfW - 0.42 * s), halfH - yPx * upp, -D);
     } else {
       anchor.set(st.side * (halfW - 0.55 * s), -halfH + 0.72 * s, -D);
     }

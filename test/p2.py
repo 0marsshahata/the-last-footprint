@@ -28,7 +28,7 @@ async def main():
         await pg.click("#lang"); await pg.wait_for_timeout(1500); await shot("f_home_en")
         await pg.click("#lang")
         await pg.wait_for_function("window.__tlf.surfaceReady", timeout=180000)
-        await pg.click("#go-warp"); await pg.wait_for_timeout(800); await pg.click("#guide-chips button[data-site='spirit']"); await pg.wait_for_timeout(1500); await pg.click("#guide-land")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-warp"); await pg.wait_for_timeout(800); await pg.click("#guide-chips button[data-site='spirit']"); await pg.wait_for_timeout(1500); await pg.click("#guide-land")
         await pg.wait_for_function("__tlf.S.stage==='warp'", timeout=60000)
         await pg.evaluate("__tlf.S.timeScale=0.5")
         await pg.wait_for_timeout(3000); await shot("g_warp1")

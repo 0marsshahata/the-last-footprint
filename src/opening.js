@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { marsSun, latLonToVec, localSolarHour } from './mars24.js';
 import { vnoise } from './noise.js';
+import { ATLAS } from './content.js';
 
 // Landing sites (planetocentric latitude, east longitude)
 // still-active rovers, shown in the ending as "the footprints continue"
@@ -155,6 +156,22 @@ export function buildOpening(renderer, quality) {
     return { site, n, g, core, rings, beam, pin, head, hit, on: 0, target: 0, phase: i * 0.37, el: null, pinK: 0 };
   });
 
+  // ----- "coming soon" hardware: small grey pins, only while choosing a landing site -----
+  const ghosts = ATLAS.mars.filter((g) => g.pin !== false).map((site) => {
+    const n = latLonToVec(site.lat, site.lon, new THREE.Vector3());
+    const g = new THREE.Group();
+    g.position.copy(n).multiplyScalar(1.003);
+    g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
+    const pin = new THREE.Group(); pin.scale.setScalar(0.001); g.add(pin);
+    const stalk = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 0.1, 6).translate(0, 0.05, 0), new THREE.MeshBasicMaterial({ color: '#9b948c', transparent: true, opacity: 0.85 }));
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.017, 16, 12), new THREE.MeshBasicMaterial({ color: '#c9c2b8', transparent: true, opacity: 0.9 }));
+    head.position.y = 0.11; pin.add(stalk, head);
+    const hit = new THREE.Mesh(new THREE.SphereGeometry(0.07, 10, 8), new THREE.MeshBasicMaterial({ visible: false }));
+    hit.position.y = 0.09; hit.userData.site = 'ghost:' + site.id; pin.add(hit);
+    scene.add(g);
+    return { site, n, g, pin, head, hit, k: 0 };
+  });
+
   // ----- the trail: great-circle arcs Sojourner -> Spirit -> Opportunity -> Curiosity -> Perseverance -----
   const trailPts = [];
   const chain = ['sojourner', 'spirit', 'opportunity', 'curiosity', 'perseverance'].map((id) => ALL.find((x) => x.id === id));
@@ -289,7 +306,7 @@ export function buildOpening(renderer, quality) {
 
   function enterEnding() {
     st.phase = 'ending'; st.focus = null; st.warp = null; amb.intensity = 0.32; trailState.k = 0;
-    rig.lon = startLon(marsSun(new Date()).lonE); rig.lat = 10; rig.r = rig.pickR * 1.6; title.opacity = 0;
+    rig.lon = 70; rig.lat = 10; // start facing Perseverance and Curiosity, the footprints that continue; the globe then turns east toward Spirit rig.r = rig.pickR * 1.6; title.opacity = 0;
     beacons.forEach((b) => { b.target = 1; });
   }
   function enterPick() {
@@ -297,7 +314,7 @@ export function buildOpening(renderer, quality) {
     beacons.forEach((b) => { b.target = b.site.extra ? 0 : 1; });
   }
   function focusSite(id) {
-    const b = beacons.find((x) => x.site.id === id);
+    const b = beacons.find((x) => x.site.id === id) || ghosts.map((g) => ({ site: { ...g.site, id: 'ghost:' + g.site.id } })).find((x) => x.site.id === id);
     st.focus = b ? { id, lon: b.site.lon, lat: THREE.MathUtils.clamp(b.site.lat, -40, 40) } : null;
   }
   function dragStart() { st.dragging = true; st.focus = null; st.idle = 0; st.vLon = 0; st.vLat = 0; }
@@ -312,7 +329,7 @@ export function buildOpening(renderer, quality) {
     ndc.set((x / innerWidth) * 2 - 1, -(y / innerHeight) * 2 + 1);
     ray.setFromCamera(ndc, camera);
     const pHit = ray.intersectObject(planet, false)[0];
-    const hits = ray.intersectObjects(beacons.filter((b) => b.pin.visible).map((b) => b.hit), false);
+    const hits = ray.intersectObjects([...beacons, ...ghosts].filter((b) => b.pin.visible).map((b) => b.hit), false);
     for (const h of hits) if (!pHit || h.distance < pHit.distance + 0.02) return h.object.userData.site;
     return null;
   }
@@ -429,6 +446,16 @@ export function buildOpening(renderer, quality) {
       b.pin.scale.setScalar(Math.max(0.001, pop));
       b.pin.visible = b.pinK > 0.01;
       b.head.material.color.setRGB(sel ? 0.7 : 1.35, sel ? 1.9 : 0.72, sel ? 2.3 : 0.3);
+    });
+
+    ghosts.forEach((gh) => {
+      gh.g.getWorldPosition(proj); tmp.copy(camera.position).sub(proj).normalize();
+      gh.g.visible = tmp.dot(gh.n) > -0.05;
+      gh.k += ((st.phase === 'pick' ? 1 : 0) - gh.k) * Math.min(1, dt * 5);
+      const sel = st.focus && st.focus.id === 'ghost:' + gh.site.id;
+      gh.pin.scale.setScalar(Math.max(0.001, gh.k * (sel ? 1.4 : 1)));
+      gh.pin.visible = gh.k > 0.01;
+      gh.head.material.color.set(sel ? '#e9e4dc' : '#c9c2b8');
     });
 
     if (title.mat) {

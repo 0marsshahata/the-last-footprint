@@ -33,7 +33,7 @@ async def main():
         await pg.wait_for_function("window.__tlf && window.__tlf.ready && window.__tlf.surfaceReady", timeout=240000)
         await pg.evaluate("__tlf.S.timeScale=3"); await pg.click("#start")
         await pg.wait_for_function("__tlf.S.stage==='home' && __tlf.opening.t>5", timeout=180000, polling=50)
-        await pg.click("#go-warp")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-warp")
         # mid-sentence the caption should be partly written (it follows the voice), not complete
         await pg.wait_for_function("__said.length>=1", timeout=60000, polling=30)
         await pg.wait_for_timeout(1200)

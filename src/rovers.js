@@ -1,6 +1,7 @@
 // AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -137,8 +138,14 @@ export function buildSojourner() {
   return finish('sojourner', g, u, 0.6, 0.45);
 }
 
+// the rover model is meshopt-compressed (about a third smaller to download)
+function merLoader() { return new GLTFLoader().setMeshoptDecoder(MeshoptDecoder); }
 export async function loadMER(url, onProgress) {
-  const gltf = await new GLTFLoader().loadAsync(url, onProgress);
+  const gltf = await merLoader().loadAsync(url, onProgress);
+  return gltf.scene;
+}
+export async function parseMER(buffer) {
+  const gltf = await merLoader().parseAsync(buffer, './models/');
   return gltf.scene;
 }
 

@@ -15,7 +15,7 @@ async def main():
         await pg.wait_for_function("__tlf.S.stage==='home'", timeout=180000, polling=50)
         await pg.wait_for_timeout(3000)
         await pg.evaluate("__meter('space_ambient', 1500)")
-        await pg.click("#go-warp")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-warp")
         await pg.wait_for_function("document.querySelector('#guide-text').textContent.length > 3", timeout=60000, polling=30)
         await pg.evaluate("__meter('guide_voice', 2000)")
         await pg.click("#guide-chips button[data-site='spirit']")

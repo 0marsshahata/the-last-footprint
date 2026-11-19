@@ -1,0 +1,75 @@
+"""Screenshot tour of every main screen, for a visual review.
+usage: python3 test/tour.py W H tag [ar|en]"""
+import asyncio, sys
+from playwright.async_api import async_playwright
+W, H = int(sys.argv[1]), int(sys.argv[2]); tag = sys.argv[3]; lang = sys.argv[4] if len(sys.argv) > 4 else 'ar'
+OUT = "shots/tour/"
+
+async def main():
+    import os; os.makedirs(OUT, exist_ok=True)
+    async with async_playwright() as p:
+        b = await p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"])
+        ctx = await b.new_context(viewport={"width": W, "height": H}, device_scale_factor=1, is_mobile=W < 600, has_touch=W < 600)
+        pg = await ctx.new_page(); errs = []
+        pg.on("pageerror", lambda e: errs.append(str(e)))
+        await pg.route("https://script.google.com/**", lambda r: r.fulfill(status=200, body="ok"))
+        await pg.add_init_script(f"localStorage.setItem('tlf-lang','{lang}');")
+        async def shot(n): await pg.wait_for_timeout(700); await pg.screenshot(path=f"{OUT}{tag}{n}.png")
+        await pg.goto("http://localhost:8777/index.html?dtmax=0.25&test")
+        await pg.wait_for_function("window.__tlf && window.__tlf.ready", timeout=180000)
+        await shot("01_signal")
+        await pg.click("#start")
+        await pg.wait_for_function("__tlf.S.stage==='home'", timeout=180000, polling=50)
+        await pg.wait_for_function("__tlf.opening.t >= 6 && __tlf.surfaceReady", timeout=180000, polling=50)
+        await shot("02_atlas")
+        await pg.click("#atlas .atlas-card[data-world=moon]"); await shot("02b_moon")
+        await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+        await pg.click("#atlas .atlas-card[data-world=space]"); await shot("02c_space")
+        await pg.keyboard.press("Escape"); await pg.wait_for_timeout(300)
+        await pg.click("#atlas .atlas-card.ready"); await shot("02d_mars")
+        await pg.click("#go-warp"); await shot("03_pre")
+        await pg.click("#pre-ok"); await pg.click("#pre .age >> nth=2"); await shot("04_consent")
+        await pg.click("#pre [data-act='start']"); await shot("05_preq")
+        for i in range(3): await pg.click("#pre .g-opts button >> nth=0"); await pg.wait_for_timeout(200)
+        await shot("06_predone")
+        await pg.click("#pre [data-act=go]"); await pg.wait_for_timeout(1500); await shot("07_pick")
+        await pg.click("#ghost-chips button >> nth=4"); await pg.wait_for_timeout(1200); await shot("07b_ghost")
+        await pg.keyboard.press("Escape"); await pg.wait_for_timeout(400)
+        await pg.evaluate("__tlf.S.focus=1; __tlf.goSurface()")
+        await pg.wait_for_function("__tlf.S.mode==='hall'", timeout=180000, polling=50)
+        await pg.wait_for_timeout(1500); await shot("08_hall_asleep")
+        await pg.evaluate("__tlf.wakeNow()")
+        await pg.wait_for_function("__tlf.S.mode==='hall' && __tlf.S.awake[1]", timeout=60000, polling=50)
+        await pg.wait_for_timeout(2500); await shot("09_hall_awake")
+        await pg.click("#stats-btn"); await shot("10_stats")
+        await pg.click("#stats-btn")
+        await pg.click("#explore-btn"); await pg.wait_for_timeout(800); await shot("11_ex_life")
+        for t in ["finds", "last", "play"]:
+            await pg.click("#ext-" + t); await shot("12_ex_" + t)
+        await pg.click("#ext-last"); await pg.wait_for_timeout(300)
+        await pg.click("#exp-last .src-btn >> nth=0"); await shot("13_srcpop")
+        await pg.keyboard.press("Escape"); await pg.keyboard.press("Escape"); await pg.wait_for_timeout(500)
+        await pg.click("#about-btn"); await shot("14_about"); await pg.keyboard.press("Escape")
+        await pg.evaluate("__tlf.S.awake=[true,true,true]; __tlf.focusRover(0)"); await pg.wait_for_timeout(2500)
+        await shot("15_hall_all")
+        await pg.evaluate("__tlf.goEnding()")
+        await pg.wait_for_function("document.querySelector('#legacy').classList.contains('open')", timeout=120000, polling=100)
+        await shot("16_legacy")
+        for i in range(5): await pg.click("#legacy [data-act='next']"); await pg.wait_for_timeout(200)
+        await shot("17_legacy_end")
+        await pg.click("#legacy [data-act='quiz']"); await shot("18_quiz")
+        for i in range(5):
+            await pg.click("#fquiz .g-opts button >> nth=0"); await pg.wait_for_timeout(200)
+            if i == 0: await shot("19_quiz_ans")
+            await pg.click("#fquiz [data-act=nextq]"); await pg.wait_for_timeout(200)
+        await shot("20_score")
+        await pg.click("#fquiz [data-act=finish], #fquiz button.primary >> nth=0");
+        await pg.wait_for_function("!document.querySelector('#end-form').hidden", timeout=120000, polling=100)
+        await shot("21_form")
+        await pg.fill("#end-name", "Omar"); await pg.click("#end-form button[type=submit]")
+        await pg.wait_for_function("!document.querySelector('#cert').hidden", timeout=30000, polling=100)
+        await shot("22_cert")
+        print("errors:", errs[:5])
+        await b.close()
+
+asyncio.run(main())

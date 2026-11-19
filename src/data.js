@@ -65,28 +65,43 @@ export const ROVERS = [
     "ar": "نزلت على المريخ يوم ٤ يوليو ١٩٩٧ جوه وادي اسمه Ares Vallis، ونطّيت على الأرض جوه أكياس هوا زي الكورة! كان مخطط أشتغل ٧ أيام بس… واشتغلت حوالي ٨٣ يوم.",
     "tts_ar": "نزلت على المريخ يوم 4 يوليو 1997 جوه وادي اسمه آريس فاليس، ونطّيت على الأرض جوه أكياس هوا زي الكورة! كان مخطط أشتغل 7 أيام بس، واشتغلت حوالي 83 يوم.",
     "en": "I landed on Mars on 4 July 1997 in a valley called Ares Vallis, bouncing on the ground inside airbags like a ball! I was planned to work for just 7 days… and I worked for about 83.",
-    "audio_en": "audio/sojourner_3_en.mp3"
+    "audio_en": "audio/sojourner_3_en.mp3",
+    "src": [
+     "mpfFact",
+     "mpfEnd"
+    ]
    },
    {
     "kind": "fact",
     "ar": "وزني حوالي ١٠ كيلو بس، وكنت بفحص الصخور بجهاز في ضهري. والعلماء سمّوا الصخور اللي حواليّا أسامي لطيفة زي Barnacle Bill و Yogi!",
     "tts_ar": "وزني حوالي 10 كيلو بس، وكنت بفحص الصخور بجهاز في ضهري. والعلماء سمّوا الصخور اللي حواليا أسامي لطيفة زي بارناكل بيل ويوجي!",
     "en": "I weighed only about 10 kilograms, and I studied rocks with an instrument on my back. Scientists gave the rocks around me fun names like Barnacle Bill and Yogi!",
-    "audio_en": "audio/sojourner_4_en.mp3"
+    "audio_en": "audio/sojourner_4_en.mp3",
+    "src": [
+     "mpfNssdc",
+     "mpfRocks"
+    ]
    },
    {
     "kind": "fact",
     "ar": "الوادي اللي نزلت فيه اتحفر من فيضانات مية ضخمة من زمان أوي، والصخور اللي فحصتها ساعدت العلماء يفهموا إن المريخ كان فيه مية كتير.",
     "tts_ar": "الوادي اللي نزلت فيه اتحفر من فيضانات مية ضخمة من زمان أوي، والصخور اللي فحصتها ساعدت العلماء يفهموا إن المريخ كان فيه مية كتير.",
     "en": "The valley I landed in was carved by huge floods long ago, and the rocks I studied helped scientists understand that Mars once had a lot of water.",
-    "audio_en": "audio/sojourner_5_en.mp3"
+    "audio_en": "audio/sojourner_5_en.mp3",
+    "src": [
+     "mpfFact"
+    ]
    },
    {
     "kind": "fact",
     "ar": "في سبتمبر ١٩٩٧ المحطة اللي كنت بكلّم الأرض من خلالها سكتت، فبقيت لوحدي. بس أنا اللي فتحت الطريق لكل الروفرز اللي جم بعدي.",
     "tts_ar": "في سبتمبر 1997 المحطة اللي كنت بكلّم الأرض من خلالها سكتت، فبقيت لوحدي. بس أنا اللي فتحت الطريق لكل الروفرز اللي جم بعدي.",
     "en": "In September 1997, the lander I used to talk to Earth went silent, and I was left alone. But I opened the road for every rover that came after me.",
-    "audio_en": "audio/sojourner_6_en.mp3"
+    "audio_en": "audio/sojourner_6_en.mp3",
+    "src": [
+     "mpfEnd",
+     "mpfJpl"
+    ]
    }
   ]
  },
@@ -155,28 +170,43 @@ export const ROVERS = [
     "ar": "نزلت على المريخ يوم ٤ يناير ٢٠٠٤ جوه فوهة اسمها جوسيف. كانوا مخططين أشتغل ٩٠ يوم مريخي بس… وأنا اشتغلت أكتر من ٢٢٠٠!",
     "tts_ar": "نزلت على المريخ يوم 4 يناير 2004 جوه فوهة اسمها جوسيف. كانوا مخططين أشتغل 90 يوم مريخي بس، وأنا اشتغلت أكتر من 2200!",
     "en": "I landed on Mars on 4 January 2004, inside Gusev Crater. I was planned to work for just 90 Martian days… and I worked for more than 2,200!",
-    "audio_en": "audio/spirit_3_en.mp3"
+    "audio_en": "audio/spirit_3_en.mp3",
+    "src": [
+     "spirit",
+     "spiritEnd"
+    ]
    },
    {
     "kind": "fact",
     "ar": "سنة ٢٠٠٦ عجلتي الأمامية اليمين بطّلت تلف، فبقيت أمشي لورا وأنا بجرّها. وتخيّل؟ العجلة دي حفرت الأرض وكشفت تربة كلها تقريبًا سيليكا، ودي علامة إن زمان كان فيه مية سخنة هنا.",
     "tts_ar": "سنة 2006 عجلتي الأمامية اليمين بطّلت تلف، فبقيت أمشي لورا وأنا بجرّها. وتخيّل؟ العجلة دي حفرت الأرض وكشفت تربة كلها تقريبا سيليكا، ودي علامة إن زمان كان فيه مية سخنة هنا.",
     "en": "In 2006 my right front wheel stopped turning, so I drove backwards, dragging it. And guess what? That wheel dug up soil that was almost pure silica, a sign that hot water once existed here.",
-    "audio_en": "audio/spirit_4_en.mp3"
+    "audio_en": "audio/spirit_4_en.mp3",
+    "src": [
+     "silica",
+     "silicaAsu"
+    ]
    },
    {
     "kind": "fact",
     "ar": "سنة ٢٠٠٩ غرزت في رمل ناعم في مكان اسمه Troy. وفي ٢٠١٠ جه الشتا والطاقة خلصت، وبطّلت أتكلم.",
     "tts_ar": "سنة 2009 غرزت في رمل ناعم في مكان اسمه تروي. وفي 2010 جه الشتا والطاقة خلصت، وبطّلت أتكلم.",
     "en": "In 2009 I got stuck in soft sand at a place called Troy. In 2010 winter came, my power ran out, and I stopped talking.",
-    "audio_en": "audio/spirit_5_en.mp3"
+    "audio_en": "audio/spirit_5_en.mp3",
+    "src": [
+     "troyOrbit",
+     "spiritEnd"
+    ]
    },
    {
     "kind": "fact",
     "ar": "بس آثاري لسه هنا: ٧٫٧ كيلومتر مشيتهم على المريخ. تحب تكتشف رحلتي؟",
     "tts_ar": "بس آثاري لسه هنا: سبعة كيلو وسبعمية متر مشيتهم على المريخ. تحب تكتشف رحلتي؟",
     "en": "But my footprints are still here: 7.7 kilometres driven on Mars. Want to explore my journey?",
-    "audio_en": "audio/spirit_6_en.mp3"
+    "audio_en": "audio/spirit_6_en.mp3",
+    "src": [
+     "spiritEnd"
+    ]
    }
   ]
  },
@@ -245,28 +275,42 @@ export const ROVERS = [
     "ar": "نزلت يوم ٢٥ يناير ٢٠٠٤، ونطّيت في أكياس الهوا لحد ما وقعت جوه فوهة صغيرة اسمها Eagle. العلماء سمّوها «Hole in one» زي الجولف!",
     "tts_ar": "نزلت يوم 25 يناير 2004، ونطّيت في أكياس الهوا لحد ما وقعت جوه فوهة صغيرة اسمها إيجل. العلماء سمّوها هول إن وان، زي الجولف!",
     "en": "I landed on 25 January 2004 and bounced in my airbags until I rolled into a small crater called Eagle. Scientists called it a \"hole in one\", like in golf!",
-    "audio_en": "audio/opportunity_3_en.mp3"
+    "audio_en": "audio/opportunity_3_en.mp3",
+    "src": [
+     "oppEnd",
+     "twins20jpl"
+    ]
    },
    {
     "kind": "fact",
     "ar": "هناك لقيت كور صغيرة من معدن اسمه هيماتيت، والعلماء سمّوها «التوت». الكور دي بتتكوّن في وجود مية، يعني المكان ده كان فيه مية زمان.",
     "tts_ar": "هناك لقيت كور صغيرة من معدن اسمه هيماتيت، والعلماء سمّوها التوت. الكور دي بتتكوّن في وجود مية، يعني المكان ده كان فيه مية زمان.",
     "en": "There I found tiny balls of a mineral called hematite, which scientists nicknamed \"blueberries\". They form in water, so this place once had water.",
-    "audio_en": "audio/opportunity_4_en.mp3"
+    "audio_en": "audio/opportunity_4_en.mp3",
+    "src": [
+     "twins20"
+    ]
    },
    {
     "kind": "fact",
     "ar": "كان مخطط أعيش ٩٠ يوم مريخي… وعشت حوالي ١٥ سنة! ومشيت أكتر من ٤٥ كيلومتر، يعني أكتر من ماراثون كامل.",
     "tts_ar": "كان مخطط أعيش 90 يوم مريخي، وعشت حوالي 15 سنة! ومشيت أكتر من 45 كيلومتر، يعني أكتر من ماراثون كامل.",
     "en": "I was planned to live for 90 Martian days… and I lived for about 15 years! I drove more than 45 kilometres, longer than a whole marathon.",
-    "audio_en": "audio/opportunity_5_en.mp3"
+    "audio_en": "audio/opportunity_5_en.mp3",
+    "src": [
+     "oppEnd",
+     "record"
+    ]
    },
    {
     "kind": "fact",
     "ar": "في ٢٠١٨ جت عاصفة ترابية غطّت المريخ كله وحجبت الشمس عن ألواحي، وبطّلت أتكلم. بس آثاري لسه مرسومة على الرمل. تحب تمشي على خطايا؟",
     "tts_ar": "في 2018 جت عاصفة ترابية غطّت المريخ كله وحجبت الشمس عن ألواحي، وبطّلت أتكلم. بس آثاري لسه مرسومة على الرمل. تحب تمشي على خطايا؟",
     "en": "In 2018 a dust storm covered all of Mars and blocked the Sun from my solar panels, and I stopped talking. But my tracks are still drawn in the sand. Want to walk in my footsteps?",
-    "audio_en": "audio/opportunity_6_en.mp3"
+    "audio_en": "audio/opportunity_6_en.mp3",
+    "src": [
+     "twins"
+    ]
    }
   ]
  }

@@ -26,7 +26,7 @@ async def main():
         await wf("window.__tlf && window.__tlf.ready")
         await pg.click("#start")
         await wf("__tlf.S.stage==='home' && __tlf.surfaceReady && __tlf.opening.t>5")
-        await pg.click("#go-exp")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-exp"); await pg.wait_for_timeout(500); await pg.click("#pre [data-act=skip]")
         await wf("__tlf.S.stage==='exp'")
         await wf("!document.querySelector('#exp-act').hidden")
         await pg.wait_for_timeout(1500); await shot("a_pad")

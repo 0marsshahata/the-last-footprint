@@ -1,6 +1,7 @@
 // AI disclosure (NASA Space Apps SI rules): written by Team 3M with AI coding assistance from Claude (Anthropic).
-import { TIMELINES, SOL18, QUIZ, CARDS, SOURCES, COMPARE } from './content.js';
+import { TIMELINES, SOL18, QUIZ, CARDS, SOURCES, COMPARE, LAST } from './content.js';
 import { T } from './ui.js';
+import { srcButton } from './sources.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -10,12 +11,14 @@ const num = (n, L) => (L === 'ar' ? Number(n).toLocaleString('ar-EG') : Number(n
 function reveal(el) { el.hidden = false; void el.offsetWidth; el.classList.add('open'); }
 function conceal(el, ms) { el.classList.remove('open'); setTimeout(() => { if (!el.classList.contains('open')) el.hidden = true; }, ms); }
 
-export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
+export function createExplore({ getLang, onBadge, audio, onClose, onLegacy, say, stopSay }) {
   const sheet = $('#explore'), body = $('#explore-body'), title = $('#explore-title');
   const game = $('#game'), gameBody = $('#game-body');
   const about = $('#about'), aboutBody = $('#about-body');
   const cmp = $('#compare'), cmpBody = $('#compare-body');
-  let current = null, lastFocus = null;
+  let current = null, lastFocus = null, tab = 'life';
+  const visible = (q) => [...sheet.querySelectorAll(q)].find((b) => b.offsetParent !== null);
+  const TABS = ['life', 'finds', 'last', 'play'];
 
   // ---------- explore sheet ----------
   function timelineHTML(id, L) {
@@ -48,6 +51,7 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
         <h3>${esc(c.title[L])}</h3>
         ${c.img ? `<figure><img src="${c.img}" width="${c.w}" height="${c.h}" alt="${esc(T('photoAlt', L))}" loading="lazy" decoding="async"><figcaption>${esc(c.credit)}</figcaption></figure>` : ''}
         <p>${esc(c.body[L])}</p>
+        ${c.src ? `<p class="src-line"><span class="pill">${T('factLabel', L)}</span> ${srcButton(c.src, L)}</p>` : ''}
         ${c.legacy != null ? `<button type="button" class="primary" data-act="legacy" data-at="${c.legacy}">${T('seeChain', L)}</button>` : ''}
       </section>`).join('');
   }
@@ -61,18 +65,53 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
       </div>`).join('')}</section>`;
   }
 
-  function render() {
-    if (!current) return;
-    const L = getLang();
-    title.textContent = current.name;
-    body.innerHTML = timelineHTML(current.id, L) + cardsHTML(current.id, L)
-      + (current.id === 'opportunity' ? quizHTML(L) : '')
-      + (current.id === 'spirit' ? `<section class="ex-sec"><h3>${T('gameTitle', L)}</h3><p>${T('gameIntro', L)}</p><button type="button" class="primary" data-act="game">${T('playGame', L)}</button></section>` : '')
-      + `<section class="ex-sec"><h3>${T('compareTitle', L)}</h3><p>${T('compareIntro', L)}</p><button type="button" class="primary" data-act="compare">${T('compareBtn', L)}</button></section>`;
-    requestAnimationFrame(() => sheet.querySelector('.life-fill')?.classList.add('go'));
+  // ---------- the last footprint: last place / where it is now ----------
+  function lastHTML(id, L) {
+    const d = LAST[id]; if (!d) return '';
+    const fig = (v, alt) => v.img ? `<figure class="${v.mark ? 'marked' : ''}"><div class="fig-wrap"><img src="${v.img}" width="${v.w}" height="${v.h}" alt="${esc(alt)}" loading="lazy" decoding="async">${v.mark ? `<span class="pin" style="left:${v.mark[0]}%;top:${v.mark[1]}%" aria-hidden="true"></span>` : ''}</div><figcaption>${esc(v.credit)}</figcaption></figure>` : '';
+    const part = (v, h, alt, k) => `<section class="ex-sec card">
+        <h3>${T(h, L)}</h3>${fig(v, T(alt, L))}<p>${esc(v[L])}</p>
+        <button type="button" class="mini say" data-act="say" data-part="${k}"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>${T('listen', L)}</button>
+        <p class="src-line"><span class="pill">${T('factLabel', L)}</span> ${srcButton(v.src, L)}</p></section>`;
+    return part(d.last, 'lastTitle', 'lastImgAlt', 'last') + part(d.now, 'nowTitle', 'nowImgAlt', 'now');
   }
 
-  function open(rover) {
+  function playHTML(id, L) {
+    return (id === 'spirit' ? `<section class="ex-sec"><h3>${T('gameTitle', L)}</h3><p>${T('gameIntro', L)}</p><button type="button" class="primary" data-act="game">${T('playGame', L)}</button></section>` : '')
+      + (id === 'opportunity' ? quizHTML(L) : '')
+      + `<section class="ex-sec"><h3>${T('compareTitle', L)}</h3><p>${T('compareIntro', L)}</p><button type="button" class="primary" data-act="compare">${T('compareBtn', L)}</button></section>`;
+  }
+
+  function render() {
+    if (!current) return;
+    const L = getLang(), id = current.id;
+    title.textContent = current.name;
+    const panes = { life: timelineHTML(id, L), finds: cardsHTML(id, L), last: lastHTML(id, L), play: playHTML(id, L) };
+    body.innerHTML = `<div class="ex-tabs" role="tablist" aria-label="${T('exploreBtn', L)}">${TABS.map((k) => `<button type="button" role="tab" id="ext-${k}" aria-controls="exp-${k}" aria-selected="${k === tab}" tabindex="${k === tab ? 0 : -1}">${T('tab_' + k, L)}</button>`).join('')}</div>`
+      + TABS.map((k) => `<div class="ex-pane" role="tabpanel" id="exp-${k}" aria-labelledby="ext-${k}" ${k === tab ? '' : 'hidden'}>${panes[k]}</div>`).join('');
+    if (tab === 'life') requestAnimationFrame(() => sheet.querySelector('.life-fill')?.classList.add('go'));
+  }
+
+  function setTab(k, focus) {
+    if (!TABS.includes(k)) return;
+    if (k !== tab) stopSay?.();
+    tab = k;
+    body.querySelectorAll('[role=tab]').forEach((b) => { const on = b.id === 'ext-' + k; b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus({ preventScroll: true }); });
+    body.querySelectorAll('.ex-pane').forEach((p) => { p.hidden = p.id !== 'exp-' + k; });
+    body.scrollTop = 0;
+    if (k === 'life') requestAnimationFrame(() => sheet.querySelector('.life-fill')?.classList.add('go'));
+  }
+  body.addEventListener('keydown', (e) => {
+    const b = e.target.closest('[role=tab]'); if (!b) return;
+    const rtl = document.documentElement.dir === 'rtl';
+    let i = TABS.indexOf(b.id.slice(4));
+    if (e.key === 'ArrowRight') i += rtl ? -1 : 1; else if (e.key === 'ArrowLeft') i += rtl ? 1 : -1;
+    else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = TABS.length - 1; else return;
+    e.preventDefault(); setTab(TABS[(i + TABS.length) % TABS.length], true);
+  });
+
+  function open(rover, startTab = 'life') {
+    if (current?.id !== rover.id || startTab !== 'life') tab = startTab;
     current = { id: rover.id, name: rover.data.name };
     lastFocus = document.activeElement;
     render();
@@ -89,10 +128,12 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
 
   body.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
+    if (b.getAttribute('role') === 'tab') { setTab(b.id.slice(4)); return; }
+    if (b.dataset.act === 'say') { const v = LAST[current.id]?.[b.dataset.part]; if (v) say?.(current.id, b.dataset.part, v[getLang()]); return; }
     if (b.dataset.act === 'game') openGame();
     if (b.dataset.act === 'compare') openCompare();
     if (b.dataset.act === 'legacy') onLegacy?.(+b.dataset.at);
-    if (b.dataset.act === 'photo') document.getElementById('card-photo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (b.dataset.act === 'photo') { setTab('finds'); document.getElementById('card-photo')?.scrollIntoView({ block: 'start' }); }
     if (b.dataset.ans != null) {
       const box = b.closest('.q'); const q = QUIZ[+box.dataset.q]; const L = getLang();
       const right = (b.dataset.ans === '1') === q.answer;
@@ -126,7 +167,7 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
     reveal(game);
     game.querySelector('.g-close').focus({ preventScroll: true });
   }
-  function closeGame() { conceal(game, 200); sheet.querySelector('[data-act="game"]')?.focus({ preventScroll: true }); }
+  function closeGame() { conceal(game, 200); visible('[data-act="game"]')?.focus({ preventScroll: true }); }
   gameBody.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.act === 'close') { closeGame(); return; }
@@ -152,7 +193,7 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
       <p class="small">${T('compareNote', L)}</p>`;
   }
   function openCompare() { renderCompare(); reveal(cmp); cmp.querySelector('.cmp-close').focus({ preventScroll: true }); }
-  function closeCompare() { conceal(cmp, 200); sheet.querySelector('[data-act="compare"]')?.focus({ preventScroll: true }); }
+  function closeCompare() { conceal(cmp, 200); visible('[data-act="compare"]')?.focus({ preventScroll: true }); }
   cmp.querySelector('.cmp-close').addEventListener('click', closeCompare);
   cmp.addEventListener('click', (e) => { if (e.target === cmp) closeCompare(); });
 
@@ -162,7 +203,7 @@ export function createExplore({ getLang, onBadge, audio, onClose, onLegacy }) {
     const L = getLang();
     const tabs = ['project', 'teacher', 'sources', 'ai'];
     const content = {
-      project: `<p>${T('aboutP1', L)}</p><p>${T('aboutP2', L)}</p><ul>${['aboutL1', 'aboutL5', 'aboutL6', 'aboutL2', 'aboutL3', 'aboutL4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul><p class="team">${T('teamLine', L)}</p>`,
+      project: `<p>${T('aboutP1', L)}</p><p>${T('aboutP2', L)}</p><ul>${['aboutL8', 'aboutL1', 'aboutL5', 'aboutL6', 'aboutL2', 'aboutL3', 'aboutL7', 'aboutL4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul><p class="team">${T('teamLine', L)}</p>`,
       teacher: `<p>${T('teachP1', L)}</p><ol>${['teach1', 'teach2', 'teach3', 'teach4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ol><p>${T('teachQ', L)}</p><ul>${['teachQ1', 'teachQ2', 'teachQ3', 'teachQ4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul>`,
       sources: `<ul class="src">${SOURCES.map(([t, u]) => `<li><a href="${u}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join('')}</ul><p class="small">${T('factNote', L)}</p>`,
       ai: `<p>${T('aiP1', L)}</p><ul>${['ai1', 'ai2', 'ai3', 'ai4'].map((k) => `<li>${T(k, L)}</li>`).join('')}</ul>`,

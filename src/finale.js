@@ -2,6 +2,7 @@
 // "From footprint to footprint" (what each mission passed on to the next) and the final "What did you learn?" quiz.
 import { LEGACY, FINAL_QUIZ } from './content.js';
 import { T } from './ui.js';
+import { srcButton } from './sources.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -13,7 +14,7 @@ function conceal(el, ms) { el.classList.remove('open'); setTimeout(() => { if (!
 // in the order the options were written, the right answer would always sit in the same place: shuffle once per quiz
 function shuffled(a) { const b = a.map((x, i) => [x, i]); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; }
 
-export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
+export function createFinale({ getLang, audio, onQuizDone, onQuizOpen, onLegacyClosed, compare }) {
   const lg = $('#legacy'), lgBody = $('#legacy-body');
   const fq = $('#fquiz'), fqBody = $('#fquiz-body');
   const N = LEGACY.length; // + one more step: "you"
@@ -36,7 +37,7 @@ export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
         <div class="lg-block"><h4>${T('legacyFound', L)}</h4><p>${esc(m.found[L])}</p></div>
         <div class="lg-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>
         <div class="lg-block gave"><h4>${T('legacyGave', L)}${nxt ? ` <span class="to" translate="no">→ ${nxt.name}</span>` : ''}</h4><p>${esc(m.gave[L])}</p></div>
-        <p class="lg-fact"><span class="pill">${T('factLabel', L)}</span> ${T('legacySrc', L)}</p>
+        <p class="lg-fact src-line"><span class="pill">${T('factLabel', L)}</span> ${srcButton(m.src, L)}</p>
       </div>`;
     } else {
       card = `<div class="lg-card you" data-k="you">
@@ -85,7 +86,7 @@ export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
   lg.addEventListener('click', (e) => { if (e.target === lg) closeLegacy(); });
 
   // ---------- the final quiz ----------
-  let q = 0, score = 0, order = [];
+  let q = 0, score = 0, order = [], bits = [];
   function renderQuiz() {
     const L = getLang(), total = FINAL_QUIZ.length;
     if (q >= total) {
@@ -95,8 +96,12 @@ export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
         <div class="fq-ring" style="--p:${pct}" aria-hidden="true"><b>${digits(score, L)}</b><span>/ ${digits(total, L)}</span></div>
         <h3>${T('scoreLine', L).replace('{n}', digits(score, L)).replace('{t}', digits(total, L))}</h3>
         <p>${T(msg, L)}</p>
+        ${(() => { const c = compare?.(bits); if (!c) return ''; const f = (k) => `${digits(k, L)} / ${digits(c.n, L)}`;
+          return `<div class="fq-cmp" role="group" aria-label="${T('beforeAfter', L).replace('{b}', digits(c.before, L)).replace('{a}', digits(c.after, L)).replace(/\{n\}/g, digits(c.n, L))}">
+            <span class="cap" aria-hidden="true">${T('cmpCap', L)}</span>
+            <div class="row" aria-hidden="true"><span class="col"><b>${f(c.before)}</b>${T('cmpBefore', L)}</span><span class="arr">${L === 'ar' ? '←' : '→'}</span><span class="col after"><b>${f(c.after)}</b>${T('cmpAfter', L)}</span></div></div>`; })()}
         <div class="fq-acts"><button type="button" class="primary" data-act="finish">${T('leaveFootprint', L)}</button><button type="button" class="ghost" data-act="again">${T('quizAgain', L)}</button></div></div>`;
-      if (!finished) { finished = true; onQuizDone?.(score, total); }
+      if (!finished) { finished = true; onQuizDone?.(score, total, bits.slice()); }
       fqBody.querySelector('[data-act="finish"]').focus({ preventScroll: true });
       return;
     }
@@ -111,7 +116,7 @@ export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
       <div class="fq-next"></div>`;
   }
   function openQuiz() {
-    q = 0; score = 0; finished = false;
+    q = 0; score = 0; bits = []; finished = false; onQuizOpen?.();
     renderQuiz();
     reveal(fq);
     fq.querySelector('.g-opts button')?.focus({ preventScroll: true });
@@ -126,12 +131,13 @@ export function createFinale({ getLang, audio, onQuizDone, onLegacyClosed }) {
     const b = e.target.closest('button'); if (!b) return;
     const L = getLang();
     if (b.dataset.act === 'finish') { conceal(fq, 200); return; }
-    if (b.dataset.act === 'again') { finished = true; q = 0; score = 0; renderQuiz(); fq.querySelector('.g-opts button')?.focus({ preventScroll: true }); return; }
+    if (b.dataset.act === 'again') { finished = true; q = 0; score = 0; bits = []; renderQuiz(); fq.querySelector('.g-opts button')?.focus({ preventScroll: true }); return; }
     if (b.dataset.act === 'nextq') { q++; renderQuiz(); (fq.querySelector('.g-opts button') || fq.querySelector('[data-act="finish"]'))?.focus({ preventScroll: true }); return; }
     if (b.dataset.o == null) return;
     const it = FINAL_QUIZ[q], [o] = order[+b.dataset.o];
     const right = !!o.ok;
     if (right) score++;
+    bits[q] = right ? 1 : 0;
     fqBody.querySelectorAll('.g-opts button').forEach((x, i) => { x.disabled = true; if (order[i][0].ok) x.classList.add('right'); });
     if (!right) b.classList.add('wrong');
     fqBody.querySelector('.g-fb').innerHTML = `<b>${right ? T('correct', L) : T('notQuite', L)}</b> ${esc(it.why[L])}`;

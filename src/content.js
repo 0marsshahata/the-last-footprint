@@ -85,41 +85,70 @@ export const QUIZ = [
 
 export const CARDS = {
   sojourner: [
-    { k: 'first', title: { ar: 'أول عجل على كوكب تاني', en: 'The first wheels on another planet' }, body: { ar: 'أنا أول عربية بعجل اشتغلت على كوكب غير الأرض. اتصممت أشتغل ٧ أيام، واشتغلت ٨٣ يوم. مشيت حوالي ١٠٠ متر، وحلّلت الصخور والتربة في ١٦ مكان حوالين المحطة، ولقيتها شبه الصخور البركانية اللي على الأرض. وصوّرت ٥٥٠ صورة.', en: 'I was the first wheeled vehicle ever driven on another planet. I was built for 7 days and worked for 83. I drove about 100 m, analysed rocks and soil at 16 places around the lander, and found they look like volcanic rocks on Earth. I also took 550 pictures.' } },
-    { k: 'size', title: { ar: 'قد إيه أنا صغيرة؟', en: 'How small am I?' }, body: { ar: 'طولي حوالي ٦٥ سم ووزني حوالي ١٠٫٦ كيلو بس، قد شنطة سفر صغيرة. Spirit وOpportunity وزن الواحد فيهم حوالي ١٨٠ كيلو، يعني أتقل مني ١٧ مرة!', en: 'I’m about 65 cm long and weigh only about 10.6 kg — like a small suitcase. Spirit and Opportunity weigh about 180 kg each, 17 times more than me!' } },
-    { k: 'why', title: { ar: 'ليه سكتّ؟', en: 'Why did I go silent?' }, body: { ar: 'أنا ما كنتش بكلم الأرض مباشرة، كنت بكلم المحطة Pathfinder وهي توصّل كلامي. لما Pathfinder بعتت آخر إشارة يوم ٢٧ سبتمبر ١٩٩٧، فضلت أنا لوحدي من غير صوت.', en: 'I didn’t talk to Earth directly — the Pathfinder lander relayed my messages. When Pathfinder sent its last signal on 27 Sep 1997, I was left without a voice.' } },
-    { k: 'legacy', legacy: 0, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'طريقة الهبوط بأكياس الهوا والمحطة اللي بتفتح زي الوردة اتستخدموا تاني عشان ينزّلوا Spirit وOpportunity. وأثبتت إن روفر صغير يقدر يلف حوالين الصخور لوحده، وتصميم العجل الست بتاعي بقى الأساس لكل روفرات ناسا اللي جت بعدي.', en: 'My airbag landing and my flower-like opening lander were used again to land Spirit and Opportunity. I proved a small rover can steer around rocks by itself, and my six-wheel design became the base for every NASA Mars rover after me.' } },
+    { k: 'first', src: ['mpf25', 'mpfEnd', 'mpf10'], title: { ar: 'أول عجل على كوكب تاني', en: 'The first wheels on another planet' }, body: { ar: 'أنا أول عربية بعجل اشتغلت على كوكب غير الأرض. اتصممت أشتغل ٧ أيام، واشتغلت ٨٣ يوم. مشيت حوالي ١٠٠ متر، وحلّلت الصخور والتربة في ١٦ مكان حوالين المحطة، ولقيتها شبه الصخور البركانية اللي على الأرض. وصوّرت ٥٥٠ صورة.', en: 'I was the first wheeled vehicle ever driven on another planet. I was built for 7 days and worked for 83. I drove about 100 m, analysed rocks and soil at 16 places around the lander, and found they look like volcanic rocks on Earth. I also took 550 pictures.' } },
+    { k: 'size', src: ['mpfNssdc', 'spirit'], title: { ar: 'قد إيه أنا صغيرة؟', en: 'How small am I?' }, body: { ar: 'طولي حوالي ٦٥ سم ووزني حوالي ١٠٫٦ كيلو بس، قد شنطة سفر صغيرة. Spirit وOpportunity وزن الواحد فيهم حوالي ١٨٠ كيلو، يعني أتقل مني ١٧ مرة!', en: 'I’m about 65 cm long and weigh only about 10.6 kg — like a small suitcase. Spirit and Opportunity weigh about 180 kg each, 17 times more than me!' } },
+    { k: 'why', src: ['mpfEnd'], title: { ar: 'ليه سكتّ؟', en: 'Why did I go silent?' }, body: { ar: 'أنا ما كنتش بكلم الأرض مباشرة، كنت بكلم المحطة Pathfinder وهي توصّل كلامي. لما Pathfinder بعتت آخر إشارة يوم ٢٧ سبتمبر ١٩٩٧، فضلت أنا لوحدي من غير صوت.', en: 'I didn’t talk to Earth directly — the Pathfinder lander relayed my messages. When Pathfinder sent its last signal on 27 Sep 1997, I was left without a voice.' } },
+    { k: 'legacy', legacy: 0, src: ['mpfJpl', 'ieeeSoj'], title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'طريقة الهبوط بأكياس الهوا والمحطة اللي بتفتح زي الوردة اتستخدموا تاني عشان ينزّلوا Spirit وOpportunity. وأثبتت إن روفر صغير يقدر يلف حوالين الصخور لوحده، وتصميم العجل الست بتاعي بقى الأساس لكل روفرات ناسا اللي جت بعدي.', en: 'My airbag landing and my flower-like opening lander were used again to land Spirit and Opportunity. I proved a small rover can steer around rocks by itself, and my six-wheel design became the base for every NASA Mars rover after me.' } },
   ],
   spirit: [
-    { k: 'photo', title: { ar: 'النقطة دي… إحنا', en: 'That dot is us' }, body: { ar: 'يوم ٨ مارس ٢٠٠٤، قبل شروق الشمس بساعة، Spirit صوّر النقطة المنورة دي. دي الأرض! أول صورة للأرض اتاخدت من سطح كوكب أبعد من القمر. كل الناس اللي تعرفهم موجودين جوه النقطة دي.', en: 'On 8 March 2004, one hour before sunrise, Spirit photographed this bright dot. That’s Earth! The first image of Earth ever taken from the surface of a planet beyond the Moon. Everyone you know is inside that dot.' }, img: 'assets/PIA05547.jpg', w: 1194, h: 1007, credit: 'NASA/JPL/Cornell/Texas A&M · PIA05547' },
-    { k: 'silica', title: { ar: 'اكتشاف من عجلة بايظة', en: 'A discovery from a broken wheel' }, body: { ar: 'سنة ٢٠٠٦ عجلة من عجلاتي وقفت، فبقيت أسحبها ورايا. العجلة دي حفرت في الأرض وطلّعت تربة بيضا طلعت سيليكا شبه نقية، جنب مكان اسمه Home Plate. السيليكا دي بتتكوّن حوالين ينابيع مية سخنة أو فتحات بخار، وأماكن زي دي على الأرض مليانة حياة.', en: 'In 2006 one of my wheels stopped, so I dragged it behind me. That wheel dug up white soil that turned out to be almost pure silica, near a place called Home Plate. Silica like this forms around hot springs or steam vents — places that are full of life on Earth.' } },
-    { k: 'legacy', legacy: 1, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'اكتشاف الينابيع السخنة غيّر السؤال: مش بس «كان فيه مية؟»… لأ، «هل المريخ كان ممكن يعيش فيه كائنات؟». وده بالظبط السؤال اللي Curiosity اتبعت عشانه.', en: 'Finding signs of hot springs changed the question from “was there water?” to “could Mars once have supported life?” — exactly the question Curiosity was sent to answer.' } },
+    { k: 'photo', src: ['earthDot'], title: { ar: 'النقطة دي… إحنا', en: 'That dot is us' }, body: { ar: 'يوم ٨ مارس ٢٠٠٤، قبل شروق الشمس بساعة، Spirit صوّر النقطة المنورة دي. دي الأرض! أول صورة للأرض اتاخدت من سطح كوكب أبعد من القمر. كل الناس اللي تعرفهم موجودين جوه النقطة دي.', en: 'On 8 March 2004, one hour before sunrise, Spirit photographed this bright dot. That’s Earth! The first image of Earth ever taken from the surface of a planet beyond the Moon. Everyone you know is inside that dot.' }, img: 'assets/PIA05547.jpg', w: 1194, h: 1007, credit: 'NASA/JPL/Cornell/Texas A&M · PIA05547' },
+    { k: 'silica', src: ['silica', 'silicaAsu'], title: { ar: 'اكتشاف من عجلة بايظة', en: 'A discovery from a broken wheel' }, body: { ar: 'سنة ٢٠٠٦ عجلة من عجلاتي وقفت، فبقيت أسحبها ورايا. العجلة دي حفرت في الأرض وطلّعت تربة بيضا طلعت سيليكا شبه نقية، جنب مكان اسمه Home Plate. السيليكا دي بتتكوّن حوالين ينابيع مية سخنة أو فتحات بخار، وأماكن زي دي على الأرض مليانة حياة.', en: 'In 2006 one of my wheels stopped, so I dragged it behind me. That wheel dug up white soil that turned out to be almost pure silica, near a place called Home Plate. Silica like this forms around hot springs or steam vents — places that are full of life on Earth.' } },
+    { k: 'legacy', legacy: 1, src: ['silica', 'twins20jpl'], title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'اكتشاف الينابيع السخنة غيّر السؤال: مش بس «كان فيه مية؟»… لأ، «هل المريخ كان ممكن يعيش فيه كائنات؟». وده بالظبط السؤال اللي Curiosity اتبعت عشانه.', en: 'Finding signs of hot springs changed the question from “was there water?” to “could Mars once have supported life?” — exactly the question Curiosity was sent to answer.' } },
   ],
   opportunity: [
-    { k: 'hole', title: { ar: 'هدف من أول لمسة', en: 'A hole-in-one landing' }, body: { ar: 'أكياس الهوا بتاعتي نطّت ودحرجتني جوه فوهة صغيرة اسمها Eagle. ولما فتحت كاميراتي لقيت حرفها كله صخور طبقات مكشوفة قدامي على طول! المهندسين سمّوها «hole-in-one» زي الجولف.', en: 'My airbags bounced and rolled me into a small crater called Eagle. When I opened my cameras, its rim was lined with exposed layered bedrock right in front of me! The engineers called it a “hole-in-one”, like in golf.' } },
-    { k: 'berries', title: { ar: 'التوت الأزرق اللي مش توت', en: 'Blueberries that aren’t berries' }, body: { ar: 'لقيت كور صغيرة قد حبة الخرز مالية الأرض، العلماء سمّوها «توت أزرق». طلعت معدن اسمه الهيماتيت، واتكوّنت في مية حمضية زمان. دي كانت من أهم الأدلة إن المكان ده كان غرقان مية في الماضي.', en: 'I found tiny balls, the size of beads, all over the ground. Scientists nicknamed them “blueberries”. They are made of a mineral called hematite that formed in acidic water long ago — one of the strongest clues that this place was once soaked in water.' } },
-    { k: 'gypsum', title: { ar: 'خط أبيض… دليل قوي', en: 'A white line, a strong clue' }, body: { ar: 'سنة ٢٠٠٥ لقيت صخرة طلعت نيزك من حديد ونيكل جنب درع الحرارة بتاعي. وبعد رحلة ٣ سنين لفوهة Endeavour (عرضها حوالي ٢٢ كم)، لقيت عروق بيضا من معدن الجبس، اتكوّنت من مية جرت في شقوق تحت الأرض. فريقي قال إنه أقوى دليل على المية شافوه معايا.', en: 'In 2005 I found a rock near my heat shield that turned out to be an iron-nickel meteorite. After a 3-year drive to Endeavour Crater (about 22 km wide), I found bright veins of gypsum, left by water flowing through underground cracks. My team called it the strongest evidence for water they had seen with me.' } },
-    { k: 'legacy', legacy: 2, title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'مشيت ٤٥٫١٦ كم، وده كان رقم قياسي لأي عربية سواقة على عالم تاني. واكتشافاتي أنا وSpirit عن المية كانت جزء من سبب إن ناسا وافقت تبعت Curiosity عشان تشوف: هل مكونات الحياة كانت موجودة على المريخ؟', en: 'I drove 45.16 km — a record for driving on another world. What Spirit and I found about water is part of why NASA approved Curiosity, to check whether the ingredients for life were once on Mars.' } },
+    { k: 'hole', src: ['oppEnd'], title: { ar: 'هدف من أول لمسة', en: 'A hole-in-one landing' }, body: { ar: 'أكياس الهوا بتاعتي نطّت ودحرجتني جوه فوهة صغيرة اسمها Eagle. ولما فتحت كاميراتي لقيت حرفها كله صخور طبقات مكشوفة قدامي على طول! المهندسين سمّوها «hole-in-one» زي الجولف.', en: 'My airbags bounced and rolled me into a small crater called Eagle. When I opened my cameras, its rim was lined with exposed layered bedrock right in front of me! The engineers called it a “hole-in-one”, like in golf.' } },
+    { k: 'berries', src: ['twins20'], title: { ar: 'التوت الأزرق اللي مش توت', en: 'Blueberries that aren’t berries' }, body: { ar: 'لقيت كور صغيرة قد حبة الخرز مالية الأرض، العلماء سمّوها «توت أزرق». طلعت معدن اسمه الهيماتيت، واتكوّنت في مية حمضية زمان. دي كانت من أهم الأدلة إن المكان ده كان غرقان مية في الماضي.', en: 'I found tiny balls, the size of beads, all over the ground. Scientists nicknamed them “blueberries”. They are made of a mineral called hematite that formed in acidic water long ago — one of the strongest clues that this place was once soaked in water.' } },
+    { k: 'gypsum', src: ['opp', 'gypsum'], title: { ar: 'خط أبيض… دليل قوي', en: 'A white line, a strong clue' }, body: { ar: 'سنة ٢٠٠٥ لقيت صخرة طلعت نيزك من حديد ونيكل جنب درع الحرارة بتاعي. وبعد رحلة ٣ سنين لفوهة Endeavour (عرضها حوالي ٢٢ كم)، لقيت عروق بيضا من معدن الجبس، اتكوّنت من مية جرت في شقوق تحت الأرض. فريقي قال إنه أقوى دليل على المية شافوه معايا.', en: 'In 2005 I found a rock near my heat shield that turned out to be an iron-nickel meteorite. After a 3-year drive to Endeavour Crater (about 22 km wide), I found bright veins of gypsum, left by water flowing through underground cracks. My team called it the strongest evidence for water they had seen with me.' } },
+    { k: 'legacy', legacy: 2, src: ['oppEnd', 'record', 'twins20jpl'], title: { ar: 'سبت إيه للي بعدي؟', en: 'What did I pass on?' }, body: { ar: 'مشيت ٤٥٫١٦ كم، وفضل ده أطول مسافة اتمشت على عالم تاني لحد ١١ أكتوبر ٢٠٢٦، لما Perseverance عدّاني. واكتشافاتي أنا وSpirit عن المية كانت جزء من سبب إن ناسا وافقت تبعت Curiosity عشان تشوف: هل مكونات الحياة كانت موجودة على المريخ؟', en: 'I drove 45.16 km — the longest drive on another world until 11 October 2026, when Perseverance passed me. What Spirit and I found about water is part of why NASA approved Curiosity, to check whether the ingredients for life were once on Mars.' } },
   ],
+};
+
+
+// "The last footprint": where each rover stopped, what it did last, its last signal. And where it is now, seen from orbit.
+export const LAST = {
+  sojourner: {
+    last: { src: ['sojStimpy', 'sojChimp', 'mpfEnd'], img: 'assets/PIA00971.jpg', w: 446, h: 218, credit: 'NASA/JPL · PIA00971',
+      ar: 'آخر صخرة درستها كان اسمها Stimpy. وآخر صور ليا من المحطة بتوريني جنب صخرة كبيرة اسمها Chimp، على بعد ١٢٫٣ متر من المحطة، وده أبعد مكان وصلتله. آخر إشارة من المحطة كانت يوم ٢٧ سبتمبر ١٩٩٧، في اليوم المريخي ٨٣.',
+      en: 'The last rock I studied was called Stimpy. The last pictures of me, taken by the lander, show me beside a big rock called Chimp, 12.3 m from the lander — the farthest I ever went. The lander’s last signal came on 27 September 1997, sol 83.' },
+    now: { src: ['mpfOrbit'],
+      ar: 'سنة ٢٠٠٦ الكاميرا HiRISE على المركبة MRO صوّرت مكان هبوطي من المدار: المحطة وأكياس الهوا باينين، وكمان حاجة صغيرة العلماء رجّحوا إنها أنا. ويمكن أكون اتحركت شوية ناحية المحطة بعد آخر إرسال.',
+      en: 'In 2006 the HiRISE camera on the Mars Reconnaissance Orbiter photographed my landing site from orbit: the lander and airbags are visible, and so is a small object scientists think is probably me. I may have moved a little closer to the lander after its last transmission.' },
+  },
+  spirit: {
+    last: { src: ['troyOrbit', 'troyWater', 'spiritEnd'],
+      ar: 'سنة ٢٠٠٩ عجلي غرزت في تربة ناعمة جداً في مكان اسمه Troy، جنب الهضبة اللي اسمها Home Plate. ما قدرتش أطلع، بس فضلت أشتغل: درست التربة اللي عجلي كشفتها، ولقيت دليل إن مية اتسربت تحت السطح. ولما الشتا جه ما قدرتش أميّل ألواحي ناحية الشمس، وآخر إشارة مني كانت يوم ٢٢ مارس ٢٠١٠.',
+      en: 'In 2009 my wheels sank into very soft soil at a place called Troy, beside a plateau called Home Plate. I couldn’t get out, but I kept working: I studied the soil my wheels had uncovered and found evidence that water had seeped below the surface. When winter came I couldn’t tilt my solar panels toward the Sun, and my last signal came on 22 March 2010.' },
+    now: { src: ['troyOrbit'], img: 'assets/PIA12205.jpg', w: 731, h: 597, mark: [26.7, 47.7], credit: 'NASA/JPL-Caltech/Univ. of Arizona · PIA12205',
+      ar: 'يوم ١٣ يونيو ٢٠٠٩ الكاميرا HiRISE صوّرتني من المدار وأنا محشور في Troy: النقطة المنورة على شمال Home Plate، الهضبة الفاتحة اللي عرضها حوالي ٨٠ متر. ولسه هناك لحد النهارده.',
+      en: 'On 13 June 2009 the HiRISE camera photographed me from orbit while I was stuck at Troy: I’m the bright dot to the left of Home Plate, the pale plateau about 80 m across. I’m still there today.' },
+  },
+  opportunity: {
+    last: { src: ['oppFinal', 'twins'], img: 'assets/PIA22908.jpg', w: 1800, h: 402, credit: 'NASA/JPL-Caltech/Cornell/ASU · PIA22908',
+      ar: 'من ١٣ مايو لـ ١٠ يونيو ٢٠١٨ صوّرت آخر بانوراما ليا: ٣٥٤ صورة لمكاني في Perseverance Valley، وكنت بدرس صخرة لما العاصفة الترابية جت. شوية صور فضلت أبيض وأسود لأني ما لحقتش أكملها. وآخر صور خالص كانت صورتين صغيرين لسما ضلمة، فيهم نقطة باهتة هي الشمس. آخر إشارة مني: ١٠ يونيو ٢٠١٨.',
+      en: 'From 13 May to 10 June 2018 I took my last panorama: 354 pictures of my spot in Perseverance Valley, where I was studying a rock when the dust storm arrived. A few frames stayed black-and-white because I ran out of time. My very last pictures were two tiny shots of a dark sky with a faint dot — the Sun. My last signal: 10 June 2018.' },
+    now: { src: ['oppOrbit'],
+      ar: 'يوم ٢٠ سبتمبر ٢٠١٨، بعد ما العاصفة هديت، الكاميرا HiRISE صوّرتني من ارتفاع حوالي ٢٦٧ كم: نقطة صغيرة في نص Perseverance Valley، على الحافة الغربية لفوهة Endeavour. ولسه مستني هناك.',
+      en: 'On 20 September 2018, after the storm cleared, the HiRISE camera photographed me from about 267 km up: a small dot halfway down Perseverance Valley, on the western rim of Endeavour Crater. I’m still waiting there.' },
+  },
 };
 
 // "From footprint to footprint": what each mission found, and what it passed on to the next one.
 // Every line here is checked against the sources listed under SOURCES.
 export const LEGACY = [
-  { id: 'sojourner', name: 'Sojourner', year: 1997, ended: true,
+  { id: 'sojourner', name: 'Sojourner', year: 1997, ended: true, src: ['mpf25', 'mpfJpl', 'ieeeSoj', 'mpfFact'],
     found: { ar: 'أول روفر على كوكب تاني. نزلت بأكياس هوا، ولفّت حوالين الصخور لوحدها، وحلّلت صخور شبه البركانية اللي عندنا.', en: 'The first rover on another planet. It landed with airbags, steered around rocks by itself, and analysed rocks that look like Earth’s volcanic rocks.' },
     gave: { ar: 'طريقة الهبوط بأكياس الهوا اتستخدمت تاني مع Spirit وOpportunity، وتصميم العجل الست بقى أساس كل روفر بعدها.', en: 'Its airbag landing was used again for Spirit and Opportunity, and its six-wheel design became the base for every rover after it.' } },
-  { id: 'spirit', name: 'Spirit', year: 2004, ended: true,
+  { id: 'spirit', name: 'Spirit', year: 2004, ended: true, src: ['silica', 'silicaAsu', 'twins20jpl'],
     found: { ar: 'عجلته البايظة حفرت ولقت سيليكا شبه نقية، علامة على ينابيع مية سخنة زمان.', en: 'Its broken wheel dug up almost pure silica, a sign of ancient hot springs.' },
     gave: { ar: 'السؤال كبر: مش بس «كان فيه مية؟» لكن «هل المريخ كان ممكن يعيش فيه كائنات؟».', en: 'The question grew: not just “was there water?” but “could Mars have supported life?”' } },
-  { id: 'opportunity', name: 'Opportunity', year: 2004, ended: true,
-    found: { ar: 'لقى «التوت الأزرق» من الهيماتيت وعروق الجبس، أدلة قوية إن المية جرت زمان. ومشي رقم قياسي: ٤٥٫١٦ كم.', en: 'It found hematite “blueberries” and gypsum veins — strong proof that water once flowed — and drove a record 45.16 km.' },
+  { id: 'opportunity', name: 'Opportunity', year: 2004, ended: true, src: ['twins20', 'gypsum', 'record', 'twins20jpl'],
+    found: { ar: 'لقى «التوت الأزرق» من الهيماتيت وعروق الجبس، أدلة قوية إن المية جرت زمان. ومشي ٤٥٫١٦ كم، أطول مسافة على عالم تاني لسنين.', en: 'It found hematite “blueberries” and gypsum veins — strong proof that water once flowed — and drove 45.16 km, the longest drive on another world for years.' },
     gave: { ar: 'اكتشافات Spirit وOpportunity كانت جزء من سبب إن ناسا وافقت تبني Curiosity.', en: 'What Spirit and Opportunity found is part of why NASA approved building Curiosity.' } },
-  { id: 'curiosity', name: 'Curiosity', year: 2012, ended: false,
+  { id: 'curiosity', name: 'Curiosity', year: 2012, ended: false, src: ['twins20jpl', 'curiosity', 'perse'],
     found: { ar: 'اتبعت تسأل: هل مكونات الحياة كانت موجودة؟ وبعد ما نزلت بشوية لقت إنها كانت موجودة، وإن فوهة Gale كان فيها بحيرة زمان.', en: 'Sent to ask: were the ingredients for life there? Soon after landing it found they were — and that Gale Crater once held a lake.' },
     gave: { ar: 'بما إن المريخ كان صالح للحياة، الخطوة الجاية: ندوّر على علامات الحياة نفسها.', en: 'Since Mars was once habitable, the next step was to look for signs of life itself.' } },
-  { id: 'perseverance', name: 'Perseverance', year: 2021, ended: false,
-    found: { ar: 'بيدوّر على علامات حياة قديمة في فوهة Jezero، وبيجمع عينات صخور ممكن ترجع الأرض في المستقبل. وسنة ٢٠٢٥ ناسا قالت إن عينة منهم فيها «علامة حيوية محتملة» لسه محتاجة دراسة.', en: 'It searches Jezero Crater for signs of ancient life and collects rock samples that could come back to Earth. In 2025 NASA said one sample holds a “potential biosignature” that still needs study.' },
+  { id: 'perseverance', name: 'Perseverance', year: 2021, ended: false, src: ['perse', 'msr', 'bio', 'record'],
+    found: { ar: 'بيدوّر على علامات حياة قديمة في فوهة Jezero، وبيجمع عينات صخور ممكن ترجع الأرض في المستقبل. وسنة ٢٠٢٥ ناسا قالت إن عينة منهم فيها «علامة حيوية محتملة» لسه محتاجة دراسة. ويوم ١١ أكتوبر ٢٠٢٦ عدّى مسافة Opportunity وبقى صاحب أطول مسافة على عالم تاني.', en: 'It searches Jezero Crater for signs of ancient life and collects rock samples that could come back to Earth. In 2025 NASA said one sample holds a “potential biosignature” that still needs study. On 11 October 2026 it passed Opportunity’s distance, becoming the record holder for driving on another world.' },
     gave: { ar: 'العينات دي ممكن تجاوب يوم من الأيام على أكبر سؤال: هل كان فيه حياة على المريخ؟', en: 'One day these samples could help answer the biggest question: was there ever life on Mars?' } },
 ];
 
@@ -185,35 +214,71 @@ export const ENDING = {
   perseverance: { name: 'Perseverance', lat: 18.44, lon: 77.45, year: 2021 },
 };
 
-export const SOURCES = [
-  ['NASA — Mars Exploration Rover: Spirit', 'https://science.nasa.gov/mission/mer-spirit/'],
-  ['NASA — Mars Exploration Rover: Opportunity', 'https://science.nasa.gov/mission/mer-opportunity/'],
-  ['NASA — Mars Pathfinder / Sojourner', 'https://science.nasa.gov/mission/mars-pathfinder/'],
-  ['JPL — NASA’s Spirit Rover Completes Mission on Mars', 'https://www.jpl.nasa.gov/news/nasas-spirit-rover-completes-mission-on-mars'],
-  ['NASA Photojournal PIA05547 — You are here: Earth as seen from Mars', 'https://science.nasa.gov/photojournal/you-are-here-earth-as-seen-from-mars/'],
-  ['Spaceflight Now — Thousands of files deleted on Spirit to fix computer trouble (Feb 2004)', 'https://spaceflightnow.com/mars/mera/040201spirit.html'],
-  ['NASA GISS — Mars24 Sunclock algorithm (Allison & McEwen 2000)', 'https://www.giss.nasa.gov/tools/mars24/help/algorithm.html'],
-  ['NASA 3D Resources — Mars Exploration Rover model', 'https://science.nasa.gov/3d-resources/'],
-  ['Snopes — Opportunity’s “final words” fact check', 'https://www.snopes.com/fact-check/opportunity-rovers-final-words/'],
-  ['JPL — 20 Years After Landing: How NASA’s Twin Rovers Changed Mars Science (about 30 bounces)', 'https://www.jpl.nasa.gov/news/20-years-after-landing-how-nasas-twin-rovers-changed-mars-science/'],
-  ['JPL — Mars Exploration Rover Spirit Mission Status, 4 Jan 2004 (bounced and rolled after impact)', 'https://www.jpl.nasa.gov/news/mars-exploration-rover-spirit-mission-status-2/'],
-  ['NASA — 25 Years Ago: Mars Pathfinder launches (Sojourner drove about 100 m)', 'https://www.nasa.gov/?p=445143'],
-  ['NASA podcast “On a Mission”: Before you can drive, first you have to fly (airbag landings)', 'https://www.nasa.gov/podcasts/on-a-mission/before-you-can-drive-first-you-have-to-fly-s4e9/'],
-  ['Spaceflight Now — Giant airbags will give rovers’ landings a bounce (entry 5.4 km/s, parachute, 20 m bridle, airbags 8 s before touchdown)', 'https://spaceflightnow.com/mars/mera/031231landing.html'],
-  ['Windows to the Universe (UCAR) — MER mission events timeline (launch dates, parachute, retro-rockets)', 'https://windows2universe.org/space_missions/mars/mars_exploration_rover/mission_events.html&edu=high'],
-  ['NASA Earth Observatory — Blue Marble: Next Generation, Reto Stöckli (Earth in the expedition)', 'https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/'],
-  ['NASA — 10 years later: Pathfinder and Sojourner (550 rover images)', 'https://www.nasa.gov/image-article/pathfinder-sojourner-10-years-later/'],
-  ['JPL — Mars Pathfinder / Sojourner (airbag and petal landing reused for later rovers)', 'https://www.jpl.nasa.gov/missions/mars-pathfinder-sojourner-rover/'],
-  ['IEEE Spectrum — Sojourner: autonomous hazard avoidance and the six-wheel rocker-bogie design', 'https://spectrum.ieee.org/mars-pathfinder-rover'],
-  ['JPL — Spirit faces circuitous route (silica near Home Plate: hot springs or steam vents)', 'https://www.jpl.nasa.gov/news/nasas-mars-rover-spirit-faces-circuitous-route/'],
-  ['ASU — Foot-dragging rover finds hot-spring deposits (nearly pure silica)', 'https://news.asu.edu/content/mars-rover-finds-yellowstone-hot-spring-deposits'],
-  ['NASA — 20 Years After Landing (blueberries of hematite formed in acidic water)', 'https://www.nasa.gov/missions/mer/20-years-after-landing-how-nasas-twin-rovers-changed-mars-science/'],
-  ['JPL — Opportunity: NASA Rover Completes Mars Mission (hole-in-one, driving record)', 'https://www.jpl.nasa.gov/videos/opportunity-nasa-rover-completes-mars-mission/'],
-  ['JPL — Paydirt at Endeavour Crater (gypsum veins, strongest evidence for water)', 'https://www.jpl.nasa.gov/news/paydirt-at-8-year-old-mars-rovers-new-landing-site/'],
-  ['NASA Science — Opportunity in depth (Heat Shield Rock iron-nickel meteorite)', 'https://science.nasa.gov/mission/mer-opportunity/'],
-  ['The Planetary Society — Curiosity found Gale Crater once held a lake', 'https://www.planetary.org/space-missions/curiosity'],
-  ['NASA Science — Perseverance science: looking for signs of past life', 'https://science.nasa.gov/mission/mars-2020-perseverance/science/'],
-  ['NASA Science — Mars Sample Return', 'https://science.nasa.gov/mission/mars-sample-return/'],
-  ['NASA — Mars rover discovered a potential biosignature (2025)', 'https://www.nasa.gov/news-release/nasa-says-mars-rover-discovered-potential-biosignature-last-year/'],
-  ['Solar System Scope — Mars & Milky Way textures (CC BY 4.0)', 'https://www.solarsystemscope.com/textures/'],
-];
+import { SRC } from './sources.js';
+// every source, once, in the order of the keyed list
+export const SOURCES = Object.values(SRC);
+
+// ---------- Ghost Hardware Atlas: the Moon, Mars and deeper space ----------
+// Mars (the three rovers) is the full experience; the rest is shown as "coming soon",
+// each with one checked line and its NSSDCA entry, so the plan for the project is clear.
+export const ATLAS = {
+  worlds: [
+    { id: 'mars', img: 'assets/PIA00407.jpg', credit: 'NASA/JPL/USGS · PIA00407', imgSrc: ['imgMars'], ready: true },
+    { id: 'moon', img: 'assets/PIA00405.jpg', credit: 'NASA/JPL/USGS · PIA00405', imgSrc: ['imgMoon'], ready: false },
+    { id: 'space', img: 'assets/PIA21906.jpg', credit: 'NASA/JPL-Caltech/UCLA/MPS/DLR/IDA · PIA21906', imgSrc: ['imgCeres'], ready: false },
+  ],
+  moon: [
+    { id: 'eagle', name: 'Apollo 11 · Eagle', year: '1969', src: ['nsEagle', 'apollo11Home'],
+      ar: 'النص التحتاني من مركبة Apollo 11 واقف على القمر من 20 يوليو 1969. كان منصة الإطلاق اللي رجّعت الرواد.',
+      en: 'The lower half of Apollo 11’s lander has stood on the Moon since 20 July 1969. It was the launch pad that sent the astronauts home.' },
+    { id: 'lrv', name: 'Lunar Roving Vehicles', year: '1971–1972', src: ['lrvNssdc'],
+      ar: 'تلات عربيات كهربا ساقها رواد Apollo 15 و16 و17، ولسه مركونين على القمر. عربية Apollo 17 لوحدها مشيت حوالي 36 كم.',
+      en: 'Three electric cars driven by the Apollo 15, 16 and 17 crews, still parked on the Moon. Apollo 17’s alone drove about 36 km.' },
+    { id: 'alsep', name: 'ALSEP', year: '1969–1977', src: ['alsepNtrs', 'nsA15'],
+      ar: 'محطات علمية سابها الرواد ورا منهم. أجهزة رصد الزلازل فيها سجّلت هزّات القمر لحد ما اتقفلت يوم 30 سبتمبر 1977.',
+      en: 'Science stations the astronauts left behind. Their seismometers recorded moonquakes until they were switched off on 30 September 1977.' },
+    { id: 'surveyor1', name: 'Surveyor 1', year: '1966', src: ['nsS1', 'surveyor1Nasa'],
+      ar: 'أول مركبة أمريكية تنزل على القمر بهدوء (2 يونيو 1966). أثبتت إن الأرض هناك تشيل مركبة، قبل ما البشر يروحوا.',
+      en: 'The first US spacecraft to soft-land on the Moon (2 June 1966). It showed the ground could hold a lander, before people went.' },
+    { id: 'surveyor3', name: 'Surveyor 3', year: '1967', src: ['nsS3'],
+      ar: 'نزلت سنة 1967. وبعدها بسنتين ونص، رواد Apollo 12 مشيوا لحدّها ورجّعوا الكاميرا بتاعتها للأرض.',
+      en: 'Landed in 1967. Two and a half years later, Apollo 12 astronauts walked over and brought its camera back to Earth.' },
+  ],
+  mars: [
+    { id: 'viking1', name: 'Viking 1 Lander', year: '1976', lat: 22.48, lon: -49.97, src: ['nsV1'],
+      ar: 'أول مركبة أمريكية تشتغل على سطح المريخ (20 يوليو 1976). صوّرت أول صور واضحة من السطح، واشتغلت لحد نوفمبر 1982.',
+      en: 'The first US lander to work on Mars (20 July 1976). It sent the first clear pictures from the surface and kept working until November 1982.' },
+    { id: 'viking2', name: 'Viking 2 Lander', year: '1976', lat: 47.97, lon: 134.26, src: ['nsV2'],
+      ar: 'نزلت في سهل Utopia Planitia يوم 3 سبتمبر 1976، واشتغلت لحد أبريل 1980.',
+      en: 'Landed on the plain of Utopia Planitia on 3 September 1976 and worked until April 1980.' },
+    { id: 'pathfinder', name: 'Pathfinder lander', year: '1997', pin: false, src: ['pathfinderEnd'],
+      ar: 'المركبة اللي نزّلت Sojourner، واسمها «محطة كارل ساجان التذكارية». آخر بيانات منها وصلت يوم 27 سبتمبر 1997.',
+      en: 'The lander that carried Sojourner, named the Carl Sagan Memorial Station. Its last data arrived on 27 September 1997.' },
+    { id: 'phoenix', name: 'Phoenix', year: '2008', lat: 68.22, lon: -125.7, src: ['nsPhoenix', 'phoenixJpl'],
+      ar: 'نزلت قريب من القطب الشمالي سنة 2008، وحفرت لحد ما لقت تلج مية تحت التربة. آخر إشارة منها 2 نوفمبر 2008.',
+      en: 'Landed near the north pole in 2008 and dug down to water ice under the soil. Its last signal came on 2 November 2008.' },
+    { id: 'insight', name: 'InSight', year: '2018', lat: 4.5, lon: 135.62, src: ['nsInsight', 'insightEnd'],
+      ar: 'كانت بتسمع قلب المريخ: سجّلت 1,319 زلزال مريخي، لحد ما التراب غطّى ألواحها الشمسية في ديسمبر 2022.',
+      en: 'It listened to the heart of Mars, recording 1,319 marsquakes until dust covered its solar panels in December 2022.' },
+    { id: 'ingenuity', name: 'Ingenuity', year: '2021', lat: 18.9, lon: 77.0, src: ['nsM2020', 'ingenuityEnd'],
+      ar: 'أول طيارة على كوكب تاني. طارت 72 مرة، ولما ريشة فيها اتكسرت في يناير 2024، فضلت واقفة مكانها.',
+      en: 'The first aircraft on another world. It flew 72 times; after a rotor blade broke in January 2024, it stayed where it landed.' },
+  ],
+  space: [
+    { id: 'pioneer10', name: 'Pioneer 10', year: '1972', src: ['nsP10', 'pioneerLast'],
+      ar: 'أول مركبة تعدّي حزام الكويكبات وتزور المشتري (1973). آخر إشارة ضعيفة منها يناير 2003، ولسه ماشية لبرّه المجموعة الشمسية.',
+      en: 'The first spacecraft to cross the asteroid belt and visit Jupiter (1973). Its last faint signal came in January 2003, and it is still heading out of the solar system.' },
+    { id: 'pioneer11', name: 'Pioneer 11', year: '1973', src: ['nsP11', 'pioneerLast'],
+      ar: 'أول مركبة تطير جنب زحل (1979). آخر إرسال منها وصل في سبتمبر 1995.',
+      en: 'The first spacecraft to fly past Saturn (1979). Its last transmission arrived in September 1995.' },
+    { id: 'dawn', name: 'Dawn', year: '2007', src: ['nsDawn', 'dawnEnd'],
+      ar: 'لفّت حوالين فيستا وسيريس، أكبر جسمين في حزام الكويكبات. الوقود خلص سنة 2018، ولسه بتلف حوالين سيريس.',
+      en: 'It orbited Vesta and Ceres, the two largest bodies in the asteroid belt. It ran out of fuel in 2018 and still circles Ceres.' },
+    { id: 'near', name: 'NEAR Shoemaker', year: '1996', src: ['nsNear', 'nearNasa'],
+      ar: 'أول مركبة تلف حوالين كويكب وتنزل عليه: نزلت على الكويكب إيروس يوم 12 فبراير 2001.',
+      en: 'The first spacecraft to orbit an asteroid and land on one: it touched down on Eros on 12 February 2001.' },
+    { id: 'kepler', name: 'Kepler', year: '2009', src: ['nsKepler', 'keplerEnd'],
+      ar: 'تلسكوب صيّاد كواكب: لقى أكتر من 2,600 كوكب برّه مجموعتنا الشمسية، والوقود خلص في أكتوبر 2018.',
+      en: 'A planet-hunting telescope that found more than 2,600 planets beyond our solar system. It ran out of fuel in October 2018.' },
+  ],
+};

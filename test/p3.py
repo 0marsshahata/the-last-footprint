@@ -19,7 +19,7 @@ async def main():
         await pg.click("#start")
         await pg.wait_for_function("__tlf.S.stage==='home'", timeout=180000, polling=50)
         await pg.wait_for_function("__tlf.opening.t >= 5.5", timeout=180000, polling=50)
-        await pg.click("#go-warp")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-warp")
         await pg.wait_for_function("document.querySelector('#guide-text').textContent.length > 20", timeout=180000, polling=50)
         await pg.wait_for_timeout(2500); await shot("a_hello")
         await pg.wait_for_function("document.querySelector('#guide-text').textContent.length > 40 && !document.querySelector('#guide-text').textContent.includes('سول') && !document.querySelector('#guide-text').textContent.includes('SOL')", timeout=180000, polling=100)

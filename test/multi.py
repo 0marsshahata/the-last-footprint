@@ -18,7 +18,7 @@ async def main():
         await pg.evaluate("__tlf.S.timeScale=3"); await pg.click("#start")
         await pg.wait_for_function("__tlf.S.stage==='home' && __tlf.opening.t>6", timeout=180000, polling=50)
         await shot("1home")
-        await pg.click("#go-warp"); await pg.click("#guide-chips button[data-site='opportunity']")
+        await pg.click("#atlas .atlas-card.ready"); await pg.wait_for_timeout(400); await pg.click("#go-warp"); await pg.click("#pre [data-act=skip]"); await pg.wait_for_timeout(600); await pg.click("#guide-chips button[data-site='opportunity']")
         await pg.wait_for_timeout(2500); await shot("2pick")
         await pg.click("#guide-land")
         await pg.wait_for_function("__tlf.S.mode==='hall'", timeout=180000, polling=50)

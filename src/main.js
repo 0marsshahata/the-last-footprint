@@ -6,7 +6,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { buildWorld, sunDirection } from './world.js';
-import { buildSojourner, buildMER, loadMER } from './rovers.js';
+import { buildSojourner, buildMER, parseMER } from './rovers.js';
 import { buildGlove } from './glove.js';
 import { buildFX } from './fx.js';
 import { createAudio } from './audio.js';
@@ -15,6 +15,10 @@ import { T, applyLang } from './ui.js';
 import { buildOpening, SITES, ACTIVE_SITES } from './opening.js';
 import { createExplore } from './explore.js';
 import { createFinale } from './finale.js';
+import { srcButton, initSourcePopover } from './sources.js';
+import { createLearn } from './learn.js';
+import { createAtlas } from './atlas.js';
+import { ATLAS } from './content.js';
 import { drawCertificate } from './cert.js';
 import { buildExpedition } from './expedition.js';
 import { buildEDL } from './edl.js';
@@ -39,6 +43,20 @@ const S = {
 };
 const audio = createAudio();
 const speech = createSpeech(audio);
+// "before we start" questions + the anonymous, opt-in learning data
+// Ghost Hardware Atlas: the first choice on the home screen (Mars opens the experience)
+document.body.classList.add('atlas-on');
+const atlas = createAtlas({
+  getLang: () => S.lang,
+  onMars: () => {
+    if (VOICE_FILES) speech.preload(['solPre', 'guideHello', 'guideChoose'].map((k) => `audio/v/sol_${k}_${S.lang}.mp3`));
+    document.body.classList.remove('atlas-on'); audio.beep(1); requestAnimationFrame(() => $('#go-warp').focus({ preventScroll: true })); },
+});
+$('#atlas-back').addEventListener('click', () => { document.body.classList.add('atlas-on'); requestAnimationFrame(() => $('#atlas .atlas-card')?.focus({ preventScroll: true })); });
+const learn = createLearn({ getLang: () => S.lang, audio,
+  onOpen: () => speech.speak({ file: VOICE_FILES ? `audio/v/sol_solPre_${S.lang}.mp3` : null, lang: S.lang, role: 'sol', text: ttsText(T('solPre', S.lang), S.lang) }),
+  onQuestions: () => speech.stop(),
+  onClose: () => speech.stop() });
 
 // what the voice engine should read: Arabic spellings for the rover names, plain digits, no quote marks
 const SAY_NAMES = { Sojourner: 'سوجورنر', Spirit: 'سبيريت', Opportunity: 'أوبورتشونيتي', Oppy: 'أوبي', NASA: 'ناسا', Curiosity: 'كيوريوسيتي', Perseverance: 'بيرسيفيرانس' };
@@ -188,6 +206,8 @@ function setStage(stage) {
 }
 function fadeTo(v, sec) { S.fadeTarget = v; S.fadeSpeed = 1 / Math.max(0.001, sec); }
 
+let earthP = null; // the Earth texture for the Expedition: fetched quietly once the surface is ready
+function loadEarth() { if (window.EARTH_DAY_B64) return Promise.resolve(); return (earthP ||= loadScript('models/earth-tex.js').catch((e) => { earthP = null; throw e; })); }
 function loadScript(src) {
   return new Promise((res, rej) => {
     const s = document.createElement('script'); s.src = src; s.async = true;
@@ -197,19 +217,23 @@ function loadScript(src) {
 }
 
 let merTpl = null; // the raw rover model, reused for Spirit on the landing petals
+// on a web server the compressed model starts downloading at once, in parallel with everything else;
+// from a double-clicked file (no server) it comes from models/mer-model.js instead
+const HTTP = /^https?:$/.test(location.protocol);
+const merBuf = HTTP ? fetch('models/MER.glb').then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null) : Promise.resolve(null);
 async function loadRovers() {
-  if (!window.MER_GLB_B64) { try { await loadScript('models/mer-model.js'); } catch (e) { console.warn(e); } }
-  let url = './models/MER.glb';
-  if (window.MER_GLB_B64) {
-    const bin = Uint8Array.from(atob(window.MER_GLB_B64), (c) => c.charCodeAt(0));
-    url = URL.createObjectURL(new Blob([bin], { type: 'model/gltf-binary' }));
-  }
   let tpl;
-  try {
-    tpl = await loadMER(url); merTpl = tpl;
-  } catch (err) {
-    console.warn('MER model failed, using fallback', err);
+  try { const buf = await merBuf; if (buf) tpl = await parseMER(buf); } catch (err) { console.warn('MER.glb failed, trying the embedded copy', err); }
+  if (!tpl) {
+    if (!window.MER_GLB_B64) { try { await loadScript('models/mer-model.js'); } catch (e) { console.warn(e); } }
+    try {
+      if (window.MER_GLB_B64) {
+        const bin = Uint8Array.from(atob(window.MER_GLB_B64), (c) => c.charCodeAt(0));
+        tpl = await parseMER(bin.buffer);
+      }
+    } catch (err) { console.warn('MER model failed, using fallback', err); }
   }
+  merTpl = tpl || null;
   const soj = buildSojourner();
   const spi = tpl ? buildMER('spirit', tpl) : buildSojourner();
   const opp = tpl ? buildMER('opportunity', tpl) : buildSojourner();
@@ -260,7 +284,7 @@ function flyTo(i, dur = 1.7, lift = 0.5) {
 
 // ---------- UI ----------
 const ui = {
-  bubble: $('#bubble'), text: $('#bubble-text'), kind: $('#bubble-kind'), count: $('#bubble-count'), next: $('#bubble-next'),
+  bubble: $('#bubble'), text: $('#bubble-text'), kind: $('#bubble-kind'), src: $('#bubble-src'), statsBtn: $('#stats-btn'), count: $('#bubble-count'), next: $('#bubble-next'),
   tag: $('#rover-tag'), name: $('#rover-name'), meta: $('#rover-meta'), status: $('#rover-status'), stats: $('#stats'),
   power: $('#power'), ring: $('#power-ring'), hint: $('#hint'), nav: $('#nav'), toast: $('#toast'),
   explore: $('#explore-btn'), cta: $('#end-cta'),
@@ -340,6 +364,22 @@ function rebuildTitle() {
   home.slot.replaceChildren(out);
 }
 
+// "Next:" what the child should do now (under the power button, or at the end of a rover's story)
+function nextStepHTML() {
+  const L = S.lang, d = rovers[S.focus]?.data; if (!d) return '';
+  const sleeper = S.awake.findIndex((a) => !a);
+  const next = !S.awake[S.focus] ? T(innerWidth < 760 ? 'nextWakeShort' : 'nextWake', L).replace('{r}', d.name)
+    : sleeper >= 0 ? T('nextGo', L).replace('{r}', rovers[sleeper].data.name) : T('nextEnd', L);
+  return `<b>${T('nextLabel', L)}</b> ${next}`;
+}
+
+// one panel at a time: the rover's data or SOL's speech bubble
+let statsOpen = false;
+function setStats(open) {
+  ui.stats.classList.toggle('show', open);
+  ui.statsBtn.setAttribute('aria-expanded', open);
+  document.body.classList.toggle('stats-open', open);
+}
 function renderTag() {
   const r = rovers[S.focus]; if (!r) return;
   const d = r.data, L = S.lang;
@@ -348,11 +388,19 @@ function renderTag() {
   ui.status.textContent = S.awake[S.focus] ? T('awakeNow', L) : (L === 'ar' ? d.status_ar : d.status_en);
   ui.status.classList.toggle('on', S.awake[S.focus]);
   ui.stats.innerHTML = d.stats.map((s) => `<div class="stat"><span>${L === 'ar' ? s.ar_label : s.en_label}</span><b>${L === 'ar' ? s.ar : s.en}</b></div>`).join('');
-  ui.stats.classList.toggle('show', S.awake[S.focus]);
-  ui.nav.querySelectorAll('button').forEach((b, i) => { b.classList.toggle('active', i === S.focus); b.classList.toggle('awake', S.awake[i]); b.setAttribute('aria-pressed', i === S.focus); });
+  ui.statsBtn.hidden = !S.awake[S.focus];
+  setStats(S.awake[S.focus] && statsOpen);
+  ui.nav.querySelectorAll('button').forEach((b, i) => {
+    b.classList.toggle('active', i === S.focus); b.classList.toggle('awake', S.awake[i]); b.setAttribute('aria-pressed', i === S.focus);
+    let ok = b.querySelector('.ok');
+    if (S.awake[i] && !ok) { ok = document.createElement('span'); ok.className = 'ok'; ok.innerHTML = '<span aria-hidden="true">✓</span><span class="sr-only"></span>'; b.appendChild(ok); }
+    if (!S.awake[i] && ok) ok.remove();
+    if (ok) ok.querySelector('.sr-only').textContent = ' ' + T('awakeSr', L);
+  });
   const awake = S.awake[S.focus];
   ui.power.classList.toggle('hidden', awake || S.mode !== 'hall');
-  ui.hint.textContent = awake ? T('dragHint', L) : T(innerWidth < 760 ? 'holdHintShort' : 'holdHint', L);
+  // always say what to do next
+  ui.hint.innerHTML = nextStepHTML();
   ui.hint.classList.toggle('show', S.mode === 'hall');
   ui.explore.hidden = !awake;
   ui.cta.hidden = !(allAwake() && S.mode === 'hall');
@@ -361,14 +409,23 @@ const allAwake = () => S.awake.every(Boolean);
 
 function showLine(i, n) {
   const r = rovers[i], line = r.data.lines[n], L = S.lang;
-  ui.bubble.classList.add('show');
+  ui.bubble.classList.add('show'); document.body.classList.add('bubble-on');
   ui.kind.textContent = line.kind === 'fact' ? T('fact', L) : T('story', L);
   ui.kind.className = 'kind ' + line.kind;
+  ui.src.innerHTML = line.kind === 'fact' ? srcButton(line.src, L) : '';
   ui.count.textContent = `${n + 1} / ${r.data.lines.length}`;
   ui.next.textContent = n + 1 < r.data.lines.length ? T('next', L) : T('again', L);
+  const step = $('#bubble-step'), last = n + 1 >= r.data.lines.length && S.awake.some((a) => !a);
+  step.hidden = !last; step.innerHTML = last ? nextStepHTML() : '';
   const full = L === 'ar' ? line.ar : line.en;
   const job = { onProgress: (f) => { if (typing.job === job) typing.progress = f; } };
   // a recorded Azure voice per line; the device's own voice only if the file cannot play
+  if (VOICE_FILES) {
+    const next = [`audio/v/${r.id}_${n + 2}_${L}.mp3`];
+    // waking the last rover leads straight into the ending: have SOL's lines ready
+    if (S.awake.every(Boolean)) next.push(...['endA', 'endB', 'endChain'].map((k) => `audio/v/sol_${k}_${L}.mp3`));
+    if (n + 1 < r.data.lines.length) speech.preload(next); else speech.preload(next.slice(1));
+  }
   const voiced = speech.speak({ ...job, file: VOICE_FILES ? `audio/v/${r.id}_${n + 1}_${L}.mp3` : null, lang: L, role: r.id, text: ttsText(L === 'ar' ? (line.tts_ar || line.ar) : line.en, L) });
   typing = makeTyping(full, voiced, L);
   typing.job = job;
@@ -376,11 +433,13 @@ function showLine(i, n) {
   ui.text.dir = L === 'ar' ? 'rtl' : 'ltr';
 }
 
-function hideBubble() { ui.bubble.classList.remove('show'); speech.stop(); }
+function hideBubble() { ui.bubble.classList.remove('show'); document.body.classList.remove('bubble-on'); speech.stop(); }
 
 function focusRover(i) {
   if (i === S.focus || !rovers[i] || S.mode === 'intro') return;
+  statsOpen = false;
   S.focus = i; S.charge = 0; S.holding = false;
+  prefetchVoices('rover', i);
   hideBubble();
   flyTo(i, 1.8, 0.7);
   renderTag();
@@ -418,6 +477,7 @@ function setHolding(h) {
   if (S.mode !== 'hall' || S.awake[S.focus]) return;
   audio.start();
   S.holding = h;
+  if (h && VOICE_FILES) speech.preload([`audio/v/${rovers[S.focus].id}_1_${S.lang}.mp3`]);
   ui.power.classList.toggle('holding', h);
 }
 
@@ -432,7 +492,7 @@ document.addEventListener('click', (e) => {
 });
 const isTyping = () => { const a = document.activeElement; return a && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA' || a.isContentEditable); };
 const kbButtonFocused = () => { const a = document.activeElement; return a && a.tagName === 'BUTTON' && a !== ui.power; };
-const overlayOpen = () => explore.isOpen || finale.isOpen || !$('#cert').hidden;
+const overlayOpen = () => explore.isOpen || finale.isOpen || learn.isOpen || atlas.isOpen || !$('#cert').hidden;
 window.addEventListener('keydown', (e) => {
   if (isTyping() || overlayOpen()) return;
   if ((S.stage === 'exp' || S.stage === 'edl') && (e.code === 'Space' || (e.code === 'Enter' && document.activeElement === expUI.act))) {
@@ -488,9 +548,9 @@ $('#mute').addEventListener('click', () => { audio.start(); toggleMute(); });
 $('#lang').addEventListener('click', () => {
   S.lang = S.lang === 'ar' ? 'en' : 'ar';
   try { localStorage.setItem('tlf-lang', S.lang); } catch (e) {}
-  applyLang(S.lang); renderTag();
+  applyLang(S.lang); renderTag(); if (S.started) prefetchVoices();
   opening.resize(S.lang); rebuildTitle(); renderCounter(); renderSiteStatus();
-  layoutGuide(); renderChips(); renderJourney(); explore.refresh(); finale.refresh();
+  layoutGuide(); renderChips(); renderJourney(); explore.refresh(); finale.refresh(); learn.refresh(); atlas.refresh(); renderGhostChips();
   if ((S.stage === 'pick' || S.stage === 'ending' || S.stage === 'exp' || S.stage === 'edl') && guideUI.typing.key) guideSay(guideUI.typing.key, guideUI.typing.then);
   renderExpButton(); renderExpHUD(true); if (xp.step) setStep(xp.step);
   if (ui.bubble.classList.contains('show')) showLine(S.focus, S.line[S.focus]);
@@ -615,7 +675,7 @@ function adapt(dt) {
     S.fps = Math.round(frames / acc); frames = 0; acc = 0;
     if ((DEBUG || $('#fps').classList.contains('show')) && !$('#fps').dataset.final) {
       const info = renderer.info.render;
-      $('#fps').textContent = `${S.fps} fps · pr ${S.pr.toFixed(2)} · ${info.calls} calls · ${(info.triangles / 1000).toFixed(0)}k tris`;
+      $('#fps').textContent = `${S.fps} fps · pr ${S.pr.toFixed(2)} · ${info.calls} calls · ${(info.triangles / 1000).toFixed(0)}k tris · stalls ${hitch.n} (max ${Math.round(hitch.worst * 1000)} ms)`;
     }
     if (S.stage !== 'loading' && S.stage !== 'signal' && S.fps < 52 && !document.hidden) lowStreak++; else lowStreak = 0;
     if (lowStreak >= 2 && S.pr > 0.85) {
@@ -626,10 +686,12 @@ function adapt(dt) {
 }
 
 const bench = { on: params.has('bench'), phase: 'idle', data: {} };
+const hitch = { n: 0, worst: 0 }; // frames slower than 0.1 s, shown in the F overlay
 function frame() {
   timer.update();
   if (bench.on && S.started) { const raw = timer.getDelta(); (bench.data[bench.phase] ||= []).push(raw * 1000); }
-  const dt = Math.min(timer.getDelta(), DT_MAX) * S.timeScale;
+  const rawDt = timer.getDelta(); if (rawDt > 0.1) { hitch.n++; hitch.worst = Math.max(hitch.worst, rawDt); }
+  const dt = Math.min(rawDt, DT_MAX) * S.timeScale;
   const time = timer.getElapsed();
   for (let k = jobs.length - 1; k >= 0; k--) { jobs[k].t -= dt; if (jobs[k].t <= 0) { const j = jobs.splice(k, 1)[0]; j.fn(); } }
   if (S.fade !== S.fadeTarget) {
@@ -697,6 +759,9 @@ async function boot() {
   await compileHidden(scene, camera);
   S.surfaceReady = true;
   window.__tlf.surfaceReady = true;
+  later(2, () => loadEarth().catch(() => {}));
+  // after the first visit the site opens from the device (and works offline): see sw.js
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || params.has('sw')) && !params.has('test')) navigator.serviceWorker.register('sw.js').catch(() => {});
   home.warp.classList.remove('loading');
   if (pendingWarp) startWarp(pendingWarp);
 }
@@ -704,6 +769,7 @@ async function boot() {
 function receiveSignal() {
   if (S.started) return; S.started = true;
   audio.start(); audio.signal(); audio.setAmbient('space');
+  prefetchVoices();
   document.body.classList.add('started');
   renderJourney();
   setStage('opening');
@@ -721,7 +787,27 @@ const guideUI = {
 // SOL's lines that have a recorded voice (tools/lines.mjs renders exactly these)
 const SOL_VOICED = new Set(['guideHello', 'guideChoose', 'guide_sojourner', 'guide_spirit', 'guide_opportunity', 'endA', 'endB', 'endC',
   'expHello', 'expPad', 'expLaunched', 'expCruise1', 'expCruise2', 'expMars', 'expApproach', 'expEntry', 'expEntryOk',
-  'edlChute', 'edlEarly', 'edlChuteLate', 'edlChuteOk', 'edlBags', 'edlBagsEarly', 'edlBagsLate', 'edlBagsOk', 'edlBounce', 'edlOpened', 'edlNow']);
+  'edlChute', 'edlEarly', 'edlChuteLate', 'edlChuteOk', 'edlBags', 'edlBagsEarly', 'edlBagsLate', 'edlBagsOk', 'edlBounce', 'edlOpened', 'edlNow',
+  'solPre', 'endChain', 'solQuiz']);
+
+// ---------- voices download quietly in the background, in the order the story will need them ----------
+const vfile = (k) => `audio/v/${k}_${S.lang}.mp3`;
+const roverVoice = (i) => [...ROVERS[i].lines.map((_, n) => `${ROVERS[i].id}_${n + 1}`), `${ROVERS[i].id}_last`, `${ROVERS[i].id}_now`];
+const SOL_EXP = ['expHello', 'expPad', 'expLaunched', 'expCruise1', 'expCruise2', 'expMars', 'expApproach', 'expEntry', 'expEntryOk',
+  'edlChute', 'edlEarly', 'edlChuteLate', 'edlChuteOk', 'edlBags', 'edlBagsEarly', 'edlBagsLate', 'edlBagsOk', 'edlBounce', 'edlOpened', 'edlNow'];
+function prefetchVoices(what = 'all', i = 0) {
+  if (!VOICE_FILES) return;
+  const sol = (keys) => keys.map((k) => vfile('sol_' + k));
+  if (what === 'rover') { speech.prefetch(roverVoice(i).map(vfile), true); return; }
+  if (what === 'exp') { speech.prefetch(sol(SOL_EXP), true); return; }
+  speech.prefetch([
+    ...sol(['solPre', 'guideHello', 'guideChoose', 'guide_sojourner', 'guide_spirit', 'guide_opportunity', 'expHello', 'expPad']),
+    ...[0, 1, 2].map((r) => vfile(roverVoice(r)[0])),
+    ...[0, 1, 2].flatMap((r) => roverVoice(r).slice(1).map(vfile)),
+    ...sol(['endA', 'endB', 'endChain', 'solQuiz', 'endC']),
+    ...sol(SOL_EXP),
+  ]);
+}
 function guideSay(key, then) {
   const full = T(key, S.lang);
   const el = S.stage === 'ending' ? endUI.text : (S.stage === 'exp' || S.stage === 'edl') ? expUI.text : guideUI.text;
@@ -760,8 +846,10 @@ function enterPick() {
 }
 function selectSite(id) {
   if (S.stage !== 'pick') return;
+  if (id.startsWith('ghost:')) { opening.focusSite(id); audio.beep(3); atlas.open('mars', id.slice(6)); return; }
   const i = SITES.findIndex((x) => x.id === id); if (i < 0) return;
   S.focus = i; guideUI.selected = id;
+  prefetchVoices('rover', i);
   opening.focusSite(id); renderChips();
   audio.beep(i);
   guideSay('guide_' + id);
@@ -773,6 +861,12 @@ function backHome() {
   guideUI.after = null;
 }
 guideUI.chips.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => selectSite(b.dataset.site)));
+// "coming soon" hardware on Mars: the same cards as the Atlas
+function renderGhostChips() {
+  $('#ghost-chips').innerHTML = ATLAS.mars.map((g) => `<button type="button" data-ghost="${g.id}" aria-haspopup="dialog">${g.name}</button>`).join('');
+}
+renderGhostChips();
+$('#ghost-chips').addEventListener('click', (e) => { const b = e.target.closest('[data-ghost]'); if (b) selectSite('ghost:' + b.dataset.ghost); });
 guideUI.back.addEventListener('click', backHome);
 guideUI.land.addEventListener('click', () => { if (guideUI.selected) startWarp(guideUI.selected); });
 window.addEventListener('keydown', (e) => {
@@ -794,7 +888,7 @@ function startWarp(id) {
   later(2.05, () => fadeTo(0, 0.75));
   opening.warpTo(id, enterSurface);
 }
-home.warp.addEventListener('click', enterPick);
+home.warp.addEventListener('click', () => learn.open('warp', enterPick));
 
 // spin the globe by dragging; a tap on a pin chooses it
 let gdrag = null;
@@ -921,7 +1015,7 @@ async function startExpedition() {
   audio.start();
   home.exp.classList.add('loading');
   try {
-    if (!window.EARTH_DAY_B64) await loadScript('models/earth-tex.js');
+    await loadEarth();
     if (!expd) {
       expd = buildExpedition(renderer, { marsMap: opening.planet.material.map, quality, env: envTex, reduced: reduceMotion });
       await expd.ready;
@@ -950,7 +1044,7 @@ async function startExpedition() {
     later(reduceMotion ? 1 : 9, showLaunch); // in case the voice is slow, the button still comes
   });
 }
-home.exp.addEventListener('click', startExpedition);
+home.exp.addEventListener('click', () => { if (S.stage === 'home' && S.surfaceReady && !home.exp.classList.contains('loading')) { prefetchVoices('exp'); learn.open('expedition', startExpedition); } });
 
 function onExpEvent(e) {
   if (S.stage !== 'exp') return;
@@ -1061,8 +1155,11 @@ const explore = createExplore({
   getLang: () => S.lang,
   audio,
   onBadge: (k) => { if (S.badges.has(k)) return; S.badges.add(k); toast('★ ' + T('savedSpirit', S.lang)); },
-  onClose: () => document.body.classList.remove('sheet-open'),
+  onClose: () => { document.body.classList.remove('sheet-open'); speech.stop(); },
   onLegacy: (i) => finale.openLegacy({ mode: 'explore', at: i }),
+  // a rover reads its own "last footprint" card
+  say: (id, part, text) => speech.speak({ file: VOICE_FILES ? `audio/v/${id}_${part}_${S.lang}.mp3` : null, lang: S.lang, role: id, text: ttsText(text, S.lang) }),
+  stopSay: () => speech.stop(),
 });
 ui.explore.addEventListener('click', () => {
   if (S.stage !== 'surface' || !S.awake[S.focus]) return;
@@ -1071,6 +1168,10 @@ ui.explore.addEventListener('click', () => {
   explore.open(rovers[S.focus]);
 });
 $('#about-btn').addEventListener('click', () => explore.openAbout());
+ui.statsBtn.addEventListener('click', () => { statsOpen = !statsOpen; setStats(statsOpen); });
+
+// "Source" buttons beside every Fact open one shared popover
+initSourcePopover(() => S.lang);
 
 // keep keyboard focus inside an open dialog
 document.addEventListener('keydown', (e) => {
@@ -1099,31 +1200,44 @@ function renderJourney() {
     if (i === now) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
   });
   jPrev = done;
-  const n = done.filter(Boolean).length;
-  $('#j-count').textContent = S.lang === 'ar' ? `${'٠١٢٣٤٥٦٧٨٩'[n]} / ٥` : `${n} / 5`;
+  const n = done.filter(Boolean).length, L = S.lang;
+  const step = Math.min(5, n + 1), what = n >= 5 ? 'jNow5' : n === 0 ? 'jNow0' : n === 4 ? 'jNow4' : 'jNow1';
+  $('#j-count').innerHTML = `${T('stepOf', L).replace('{n}', L === 'ar' ? '٠١٢٣٤٥٦٧٨٩'[step] : step)}: <span class="jn">${T(what, L)}</span>`;
 }
 
 // ---------- ending: "The Next Footprint" ----------
-const endUI = { root: $('#ending'), text: $('#end-text'), form: $('#end-form'), name: $('#end-name'), err: $('#end-err'), steps: $('#end-steps'), busy: false };
+const endUI = { stepper: $('#end-stepper'), root: $('#ending'), text: $('#end-text'), form: $('#end-form'), name: $('#end-name'), err: $('#end-err'), steps: $('#end-steps'), busy: false };
 // after SOL's first two lines: the chain of missions, then the final quiz, then the name and the certificate
 const finale = createFinale({
-  getLang: () => S.lang, audio,
-  onQuizDone: (score, total) => {
+  getLang: () => S.lang, audio, compare: (bits) => learn.compare(bits),
+  onQuizOpen: () => { if (S.stage === 'ending') { endStep(1); guideSay('solQuiz'); } },
+  onQuizDone: (score, total, bits) => {
     S.quiz = score == null ? null : { score, total };
+    if (S.stage === 'ending') endStep(2);
+    if (bits && bits.length === total) learn.quizDone(bits);
     if (S.stage !== 'ending' || !endUI.form.hidden) return;
     endUI.steps.hidden = true; layoutGuide();
     guideSay('endC', showEndForm);
   },
   onLegacyClosed: (mode) => { if (mode === 'ending' && S.stage === 'ending' && endUI.form.hidden) { endUI.steps.hidden = false; layoutGuide(); } },
 });
+// "the chain → the quiz → the certificate", so the child always knows where they are
+function endStep(k) {
+  endUI.stepper.hidden = k < 0;
+  endUI.stepper.querySelectorAll('li').forEach((li, i) => {
+    li.classList.toggle('done', i < k); li.classList.toggle('now', i === k);
+    if (i === k) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+  });
+}
 function showEndSteps() {
   if (S.stage !== 'ending') return;
+  endStep(0);
   endUI.steps.hidden = false; layoutGuide();
   later(reduceMotion ? 0.1 : 0.6, () => { if (S.stage === 'ending' && endUI.form.hidden && !finale.isOpen) finale.openLegacy({ mode: 'ending' }); });
 }
 $('#end-legacy').addEventListener('click', () => finale.openLegacy({ mode: 'ending' }));
 $('#end-skip').addEventListener('click', () => {
-  finale.close(); endUI.steps.hidden = true; layoutGuide();
+  finale.close(); endUI.steps.hidden = true; endStep(2); layoutGuide();
   guideSay('endC', showEndForm);
 });
 const cert = { root: $('#cert'), img: $('#cert-img'), dl: $('#cert-dl'), url: null, back: null };
@@ -1136,10 +1250,10 @@ function goEnding() {
     setStage('ending'); measureLabels();
     audio.setAmbient('space');
     opening.resize(S.lang); opening.enterEnding();
-    endUI.form.hidden = true; endUI.steps.hidden = true; endUI.text.textContent = ''; S.quiz = null;
+    endUI.form.hidden = true; endUI.steps.hidden = true; endStep(-1); endUI.text.textContent = ''; S.quiz = null;
     layoutGuide(); guide.show();
     fadeTo(1, reduceMotion ? 0.3 : 1);
-    later(reduceMotion ? 0.2 : 1.4, () => { if (S.stage === 'ending') guideSay('endA', () => guideSay('endB', showEndSteps)); });
+    later(reduceMotion ? 0.2 : 1.4, () => { if (S.stage === 'ending') guideSay('endA', () => guideSay('endB', () => guideSay('endChain', showEndSteps))); });
   });
 }
 function showEndForm() {
@@ -1163,6 +1277,7 @@ endUI.form.addEventListener('submit', async (e) => {
   endUI.busy = true;
   audio.chime();
   await fontsReady();
+  learn.finished(); endStep(3);
   const c = drawCertificate(name, S.lang, new Date(), [...S.badges], S.quiz);
   c.toBlob((blob) => {
     endUI.busy = false;
@@ -1250,8 +1365,8 @@ if (bench.on) runBench();
 
 window.__tlf = {
   ready: false, surfaceReady: false, S, rovers, renderer, focusRover, opening, receiveSignal, startWarp, setStage,
-  selectSite, enterPick, backHome, audio, speech, explore, finale, goEnding, replay, renderJourney,
-  startExpedition: () => startExpedition(), get expd() { return expd; }, get edl() { return edl; }, expPress: (d) => expPress(d), leaveExpedition: (w) => leaveExpedition(w),
+  selectSite, enterPick, backHome, audio, speech, explore, finale, learn, goEnding, replay, renderJourney,
+  startExpedition: () => startExpedition(), get xp() { return xp; }, get expd() { return expd; }, get edl() { return edl; }, expPress: (d) => expPress(d), leaveExpedition: (w) => leaveExpedition(w),
   goSurface: () => { S.started = true; document.body.classList.add('started'); enterSurface(); },
   wakeNow: () => { if (S.mode === 'hall' && !S.awake[S.focus]) { S.charge = 1; firePulse(); } },
 };

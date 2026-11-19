@@ -18,6 +18,40 @@ export function createSpeech(audio) {
   let voices = [];
   let current = null;       // { onEnd, onProgress, ended }
   let fileAudio = null;
+  // Recorded voices are downloaded in the background before they are needed (two at a time, in story order),
+  // and kept in memory, so a line starts the moment it is asked for, even on a slow connection.
+  const blobs = new Map();   // file -> blob: URL
+  const queue = []; const inflight = new Set(); let active = 0;
+  const canFetch = typeof fetch === 'function' && /^https?:$/.test(location.protocol);
+  function pump() {
+    while (active < 2 && queue.length) {
+      const f = queue.shift();
+      if (blobs.has(f) || inflight.has(f)) continue;
+      active++; inflight.add(f);
+      fetch(f).then((r) => (r.ok ? r.blob() : null)).then((b) => { if (b) blobs.set(f, URL.createObjectURL(b)); })
+        .catch(() => {}).finally(() => { active--; inflight.delete(f); pump(); });
+    }
+  }
+  /** queue files for download; urgent ones jump to the front */
+  function prefetch(files, urgent = false) {
+    if (!canFetch) return;
+    const add = files.filter((f) => f && !blobs.has(f) && !inflight.has(f));
+    add.forEach((f) => { const i = queue.indexOf(f); if (i >= 0) queue.splice(i, 1); });
+    if (urgent) queue.unshift(...add); else queue.push(...add);
+    pump();
+  }
+  // the next line: make sure it is downloading first (and, without fetch, let the media element buffer it)
+  const warm = new Map();
+  function preload(files) {
+    if (canFetch) { prefetch(files, true); return; }
+    for (const f of files) {
+      if (!f || warm.has(f)) continue;
+      const a = new Audio(); a.preload = 'auto'; a.src = f; a.load();
+      warm.set(f, a);
+      if (warm.size > 40) warm.delete(warm.keys().next().value);
+    }
+  }
+  const ready = (f) => blobs.has(f);
 
   function loadVoices() { if (synth) voices = synth.getVoices() || []; }
   loadVoices();
@@ -63,7 +97,9 @@ export function createSpeech(audio) {
     current = job;
 
     if (opts.file) {
-      const a = new Audio(opts.file);
+      let a = warm.get(opts.file);
+      if (a) { warm.delete(opts.file); a.currentTime = 0; } else a = new Audio(blobs.get(opts.file) || opts.file);
+      a.dataset.file = opts.file;
       fileAudio = a;
       a.addEventListener('timeupdate', () => { if (fileAudio === a && a.duration) job.onProgress?.(a.currentTime / a.duration); });
       a.addEventListener('ended', finish);
@@ -100,5 +136,5 @@ export function createSpeech(audio) {
     return true;
   }
 
-  return { speak, stop, available, get speaking() { return !!current; }, voiceName: (lang, role) => pickVoice(lang, role)?.name || null };
+  return { speak, stop, preload, prefetch, ready, available, get speaking() { return !!current; }, voiceName: (lang, role) => pickVoice(lang, role)?.name || null };
 }
